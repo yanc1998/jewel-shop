@@ -1,0 +1,17 @@
+{
+  "type": "postgres",
+  "host": "localhost",
+  "port": 5432,
+  "username": "postgres",
+  "password": "pass2021",
+  "database": "horarios",
+  "entities": [
+    "dist/**/infra/entities/*.{persistence,infra}.js"
+  ],
+  "migrations": [
+    "migrations/*{.js,.ts}"
+  ],
+  "cli": {
+    "migrationsDir": "migrations"
+  }
+}
