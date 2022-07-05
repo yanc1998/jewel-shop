@@ -44,14 +44,12 @@ export class CreateProductUseCase implements IUseCase<ProductCreateDto, Promise<
             return left(productOrError);
 
         const product: Product = productOrError.unwrap();
-        console.log(product)
 
         try {
             await this.productRepository.save(product);
 
             return right(Result.Ok(product));
         } catch (error) {
-            console.log(error, "errr")
             return left(Result.Fail(new AppError.UnexpectedError(error)));
         }
     }
