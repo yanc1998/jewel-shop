@@ -73,9 +73,8 @@ export class ProductController {
     @Post('create')
     @UseInterceptors(FileInterceptor('file'))
     async create(@Body() body: ProductCreateDto, @UploadedFile() file: any, @Response() res) {
-
         this._logger.log('Create');
-        const teacher = await this.createProductUseCase.execute(body);
+        const teacher = await this.createProductUseCase.execute({...body, file: file});
         return ProcessResponse.setResponse<Product>(res, teacher, ProductMappers.DomainToDto);
     }
 

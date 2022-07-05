@@ -7,6 +7,7 @@ import {UniqueEntityID} from '../../../shared/domain/UniqueEntityID';
 type ProductProps = DomainBaseProps & DomainTimestamp & {
     price: number;
     fileId: string;
+    subcategoryId: string;
 };
 
 type newProductProps = Omit<ProductProps, 'id' | 'createdAt' | 'updatedAt'>;
@@ -19,6 +20,10 @@ export class Product extends DomainEntity<ProductProps> {
 
     get description(): string {
         return this.props.description;
+    }
+
+    get subcategoryId(): string {
+        return this.props.subcategoryId;
     }
 
     get fileId(): string {
@@ -60,6 +65,7 @@ export class Product extends DomainEntity<ProductProps> {
         this.props.name = props.fullName ?? this.props.name;
         this.props.price = props.price ?? this.props.price;
         this.props.fileId = props.fileId ?? this.props.fileId;
+        this.props.subcategoryId = props.subcategoryId ?? this.props.subcategoryId;
         this.props.updatedAt = new Date();
     }
 

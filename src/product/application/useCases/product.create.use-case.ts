@@ -30,26 +30,28 @@ export class CreateProductUseCase implements IUseCase<ProductCreateDto, Promise<
 
     async execute(request: ProductCreateDto): Promise<CreateProductUseCaseResponse> {
         this._logger.log('Executing...');
-
+        console.log(request)
         const fileOrError = await this.fileCreate.execute({url: request.file.filename})
 
         if (fileOrError.isLeft()) {
             return left(Result.Fail(new AppError.UnexpectedError(fileOrError.value.unwrapError())));
         }
         const file: FileDto = FileMappers.DomainToDto(fileOrError.value.unwrap())
-
+        delete request.file
         const productOrError: Result<Product> = Product.New({...request, fileId: file.id});
 
         if (productOrError.isFailure)
             return left(productOrError);
 
         const product: Product = productOrError.unwrap();
+        console.log(product)
 
         try {
             await this.productRepository.save(product);
 
             return right(Result.Ok(product));
         } catch (error) {
+            console.log(error, "errr")
             return left(Result.Fail(new AppError.UnexpectedError(error)));
         }
     }

@@ -23,6 +23,8 @@ export class ProductMappers {
             name: domain.name,
             description: domain.description,
             price: domain.price,
+            subcategoryId: domain.subcategoryId,
+            fileId: domain.fileId,
             createdAt: domain.createdAt,
             updatedAt: domain.updatedAt,
         };
@@ -34,6 +36,7 @@ export class ProductMappers {
             name: domain.name,
             description: domain.description,
             price: domain.price,
+            subcategoryId: domain.subcategoryId,
             fileId: domain.fileId,
             createdAt: domain.createdAt,
             updatedAt: domain.updatedAt,
