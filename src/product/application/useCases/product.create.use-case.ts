@@ -6,6 +6,10 @@ import {IUseCase} from '../../../shared/core/interfaces/IUseCase';
 import {ProductCreateDto} from '../dtos/product.create.dto';
 import {Product} from "../../domain/entities/product.entity";
 import {ProductRepository} from "../../infra/repositories/product.repository";
+import {CreateFileUseCase} from "../../../file/application/useCases";
+import {File} from "../../../file/domain/entities/file.entity";
+import {FileMappers} from "../../../file/infra/mappers/file.mappers";
+import {FileDto} from "../../../file/application/dtos/file.dto";
 
 
 export type CreateProductUseCaseResponse = Either<AppError.UnexpectedErrorResult<Product>
@@ -19,6 +23,7 @@ export class CreateProductUseCase implements IUseCase<ProductCreateDto, Promise<
 
     constructor(
         private readonly productRepository: ProductRepository,
+        private readonly fileCreate: CreateFileUseCase
     ) {
         this._logger = new Logger('CreateTeacherUseCase');
     }
@@ -26,12 +31,19 @@ export class CreateProductUseCase implements IUseCase<ProductCreateDto, Promise<
     async execute(request: ProductCreateDto): Promise<CreateProductUseCaseResponse> {
         this._logger.log('Executing...');
 
-        const teacherOrError: Result<Product> = Product.New({...request});
+        const fileOrError = await this.fileCreate.execute({url: request.file.filename})
 
-        if (teacherOrError.isFailure)
-            return left(teacherOrError);
+        if (fileOrError.isLeft()) {
+            return left(Result.Fail(new AppError.UnexpectedError(fileOrError.value.unwrapError())));
+        }
+        const file: FileDto = FileMappers.DomainToDto(fileOrError.value.unwrap())
 
-        const product: Product = teacherOrError.unwrap();
+        const productOrError: Result<Product> = Product.New({...request, fileId: file.id});
+
+        if (productOrError.isFailure)
+            return left(productOrError);
+
+        const product: Product = productOrError.unwrap();
 
         try {
             await this.productRepository.save(product);

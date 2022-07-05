@@ -8,6 +8,7 @@ import {Product} from "../../../product/domain/entities/product.entity";
 type SubcategoryProps = DomainBaseProps & DomainTimestamp & {
     productsIds?: { id: string }[];
     products?: Product[];
+    categoryId: string;
 };
 
 type newSubcategoryProps = Omit<SubcategoryProps, 'id' | 'createdAt' | 'updatedAt'>;
@@ -16,6 +17,10 @@ export class Subcategory extends DomainEntity<SubcategoryProps> {
 
     get productsIds(): { id: string }[] {
         return this.props.productsIds;
+    }
+
+    get categoryId(): string {
+        return this.props.categoryId
     }
 
     get products(): Product[] {

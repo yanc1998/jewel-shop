@@ -1,3 +1,5 @@
 import {ProductDto} from './product.dto';
 
-export type ProductCreateDto = Omit<ProductDto, 'id' | 'createdAt' | 'updatedAt'> & {};
+export type ProductCreateDto = Omit<ProductDto, 'fileId' | 'id' | 'createdAt' | 'updatedAt'> & {
+    file: any
+};

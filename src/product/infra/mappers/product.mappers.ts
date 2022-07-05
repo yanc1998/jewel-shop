@@ -34,6 +34,7 @@ export class ProductMappers {
             name: domain.name,
             description: domain.description,
             price: domain.price,
+            fileId: domain.fileId,
             createdAt: domain.createdAt,
             updatedAt: domain.updatedAt,
         };

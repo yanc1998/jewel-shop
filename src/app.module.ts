@@ -7,6 +7,7 @@ import {MulterModule} from "@nestjs/platform-express";
 import {AppConfigService} from "./shared/modules/config/service/app-config-service";
 import {multerOption} from './shared/modules/config/utils/multer.config'
 import {AppConfigModule} from "./shared/modules/config/app-config.module";
+import {CategoryModule} from "./category/category.module";
 
 @Module({
     imports: [
@@ -14,6 +15,7 @@ import {AppConfigModule} from "./shared/modules/config/app-config.module";
         UserModule,
         EmailModule,
         AuthModule,
+        CategoryModule,
         MulterModule.registerAsync({
             imports: [AppConfigModule],
             inject: [AppConfigService],

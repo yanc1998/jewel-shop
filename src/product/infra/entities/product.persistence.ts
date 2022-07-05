@@ -16,15 +16,14 @@ export class ProductPersistence extends PersistentEntity {
     price: number;
 
     @Column()
-    subcategoryId: number;
+    subcategoryId: string;
 
     @ManyToOne(() => (SubcategoryPersistence), (subcategory) => (subcategory.products))
     @JoinColumn({name: 'subcategory_id'})
     subcategory: SubcategoryPersistence;
 
-
     @Column()
-    fileId: number
+    fileId: string
 
     @ManyToOne(() => (FilePersistence))
     @JoinColumn({name: 'file_id'})

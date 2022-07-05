@@ -10,7 +10,7 @@ export * from './file.remove.use-case';
 export * from './file.update.use-case';
 export * from './file.find-by-id.use-case';
 
-export const ProductUseCases = [
+export const FileUseCases = [
   CreateFileUseCase,
   PaginatedFileUseCase,
   RemoveFileUseCase,

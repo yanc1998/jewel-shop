@@ -20,7 +20,7 @@ export class SubcategoryPersistence extends PersistentEntity {
     products: ProductPersistence[] | any;
 
     @Column()
-    categoryId: number;
+    categoryId: string;
 
     @ManyToOne(() => (CategoryPersistence), (category) => (category.subcategories))
     @JoinColumn({name: 'category_id'})

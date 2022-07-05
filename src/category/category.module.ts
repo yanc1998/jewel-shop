@@ -4,7 +4,7 @@ import {TypeOrmModule} from '@nestjs/typeorm';
 import {CategoryPersistence} from './infra/entities/category.persistence';
 import {CategoryUseCases} from './application/useCases';
 import {CategoryRepository} from './infra/repositories/category.repository';
-import {TeacherController} from './presentation/controllers/teacher.controller';
+import {CategoryController} from './presentation/controllers/category.controller';
 import {SubcategoryModule} from "../subcategory/subcategory.module";
 
 @Module({
@@ -15,7 +15,7 @@ import {SubcategoryModule} from "../subcategory/subcategory.module";
     ],
     providers: [...CategoryUseCases, CategoryRepository],
     exports: [],
-    controllers: [TeacherController],
+    controllers: [CategoryController],
 })
 export class CategoryModule {
 }

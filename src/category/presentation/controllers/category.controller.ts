@@ -13,8 +13,8 @@ import {CategoryUpdateDto} from '../../application/dtos/category.update.dto';
 import {CategoryCreateDto} from '../../application/dtos/category.create.dto';
 import {CategoryMappers} from '../../infra/mappers/category.mappers';
 
-@Controller('teacher')
-export class TeacherController {
+@Controller('category')
+export class CategoryController {
 
     private _logger: Logger;
 
@@ -25,7 +25,7 @@ export class TeacherController {
         private readonly removeTeacher: RemoveCategoryUseCase,
         private readonly paginatedTeacher: PaginatedCategoryUseCase) {
 
-        this._logger = new Logger('TeacherController');
+        this._logger = new Logger('CategoryController');
     }
 
     @Get(':id')

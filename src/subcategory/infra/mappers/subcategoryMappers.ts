@@ -28,6 +28,7 @@ export class SubcategoryMappers {
             createdAt: domain.createdAt,
             updatedAt: domain.updatedAt,
             products: domain.productsIds,
+            categoryId: domain.categoryId
         };
     }
 
@@ -36,6 +37,7 @@ export class SubcategoryMappers {
             id: domain._id.toString(),
             name: domain.name,
             description: domain.description,
+            categoryId:domain.categoryId,
             createdAt: domain.createdAt,
             updatedAt: domain.updatedAt,
         };
