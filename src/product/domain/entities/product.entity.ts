@@ -7,6 +7,7 @@ import {UniqueEntityID} from '../../../shared/domain/UniqueEntityID';
 type ProductProps = DomainBaseProps & DomainTimestamp & {
     price: number;
     fileId: string;
+    count: number;
     subcategoryId: string;
 };
 
@@ -16,6 +17,10 @@ export class Product extends DomainEntity<ProductProps> {
 
     get name(): string {
         return this.props.name;
+    }
+
+    get count(): number {
+        return this.props.count
     }
 
     get description(): string {
@@ -63,6 +68,7 @@ export class Product extends DomainEntity<ProductProps> {
 
         this.props.description = props.description ?? this.props.description;
         this.props.name = props.fullName ?? this.props.name;
+        this.props.count = props.count ?? this.props.count;
         this.props.price = props.price ?? this.props.price;
         this.props.fileId = props.fileId ?? this.props.fileId;
         this.props.subcategoryId = props.subcategoryId ?? this.props.subcategoryId;

@@ -15,6 +15,9 @@ export class ProductPersistence extends PersistentEntity {
     @Column({type: 'float'})
     price: number;
 
+    @Column({type: 'int'})
+    count: number;
+
     @Column()
     subcategoryId: string;
 

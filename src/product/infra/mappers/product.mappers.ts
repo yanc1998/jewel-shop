@@ -21,6 +21,7 @@ export class ProductMappers {
         return {
             id: domain._id.toString(),
             name: domain.name,
+            count: domain.count,
             description: domain.description,
             price: domain.price,
             subcategoryId: domain.subcategoryId,
@@ -36,6 +37,7 @@ export class ProductMappers {
             name: domain.name,
             description: domain.description,
             price: domain.price,
+            count: domain.count,
             subcategoryId: domain.subcategoryId,
             fileId: domain.fileId,
             createdAt: domain.createdAt,
