@@ -1,11 +1,11 @@
-import { DomainEntity } from '../../../shared/domain/entity.abstract';
-import { Result } from '../../../shared/core/Result';
-import { EnumPermits } from 'src/shared/domain/enum.permits';
-import { Guard } from 'src/shared/core/Guard';
-import { AppError } from 'src/shared/core/errors/AppError';
-import { UserStatus } from '../enums/user.status';
-import { hashSync } from 'bcrypt';
-import { UniqueEntityID } from '../../../shared/domain/UniqueEntityID';
+import {DomainEntity} from '../../../shared/domain/entity.abstract';
+import {Result} from '../../../shared/core/Result';
+import {EnumPermits, Roles} from 'src/shared/domain/enum.permits';
+import {Guard} from 'src/shared/core/Guard';
+import {AppError} from 'src/shared/core/errors/AppError';
+import {UserStatus} from '../enums/user.status';
+import {hashSync} from 'bcrypt';
+import {UniqueEntityID} from '../../../shared/domain/UniqueEntityID';
 
 type UserProps = {
     username: string;
@@ -14,7 +14,7 @@ type UserProps = {
     email: string;
     password: string;
     status: UserStatus;
-    roles: EnumPermits[];
+    roles: Roles[];
 };
 
 
@@ -26,7 +26,7 @@ type updateUserProps = {
     username?: string;
     password?: string;
     status?: UserStatus;
-    roles?: EnumPermits[];
+    roles?: Roles[];
 };
 
 
@@ -52,7 +52,7 @@ export class User extends DomainEntity<UserProps> {
         return this.props.password;
     }
 
-    get roles(): EnumPermits[] {
+    get roles(): Roles[] {
         return this.props.roles;
     }
 

@@ -1,10 +1,10 @@
-import { EnumPermits } from 'src/shared/domain/enum.permits';
+import {EnumPermits, Roles} from 'src/shared/domain/enum.permits';
 import { BaseDto } from '../../../shared/core/BaseDto';
 import { UserStatus } from '../../domain/enums/user.status';
 
 export type UserDto = BaseDto & {
   username: string;
-  roles: EnumPermits[];
+  roles: Roles[];
   email: string;
   status: UserStatus;
 }

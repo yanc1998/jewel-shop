@@ -7,7 +7,7 @@ import { User } from 'src/user/domain/entities/user.entity';
 import { RegisterDto } from '../dtos/register.dto';
 import { CreateUserUseCase } from 'src/user/application/useCases/user.create.use-case';
 import { SendEmailUseCase } from 'src/email/application/useCases/email.send.use-case';
-import { EnumPermits } from 'src/shared/domain/enum.permits';
+import {EnumPermits, Roles} from 'src/shared/domain/enum.permits';
 import { UserStatus } from 'src/user/domain/enums/user.status';
 import { AppConfigService } from 'src/shared/modules/config/service/app-config-service';
 
@@ -30,7 +30,7 @@ export class RegisterUseCase implements IUseCase<RegisterDto, Promise<RegisterUs
 
         try {
             console.log('beofr')
-            const userOrError = await this.createUserUseCase.execute({ ...request, roles: [EnumPermits.RegularAction], status: UserStatus.Pending })
+            const userOrError = await this.createUserUseCase.execute({ ...request, roles: [Roles.Admin], status: UserStatus.Pending })
             console.log(userOrError,'userOreror')
             if (userOrError.isLeft()) {
                 console.log('entro')
