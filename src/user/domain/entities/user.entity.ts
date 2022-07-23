@@ -18,8 +18,7 @@ type UserProps = {
 };
 
 
-type newUserProps = Omit<UserProps,
-    'id' | 'createdAt' | 'updatedAt'>;
+type newUserProps = Omit<UserProps, | 'id' | 'createdAt' | 'updatedAt'>;
 
 
 type updateUserProps = {
@@ -74,6 +73,7 @@ export class User extends DomainEntity<UserProps> {
 
     public static Create(props: UserProps, id: string = null): Result<User> {
         // set guards here
+        console.log(props)
         const shortNameOrError = Guard.againstAtLeast({
             argumentPath: 'shortname',
             numChars: 3,

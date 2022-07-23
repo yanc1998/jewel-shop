@@ -12,6 +12,7 @@ import {RolesGuard} from "../application/guards/roleGuard";
 import {Roles} from '../application/guards/role'
 import {Roles as Role} from "../../shared/domain/enum.permits";
 import {JwtAuthGuard} from "../application/guards/jwtAuthGuard";
+import {ConfirmRegisterDto} from "../application/dtos/confirm.register.dto";
 
 @Controller('auth')
 export class AuthController {
@@ -33,9 +34,9 @@ export class AuthController {
         return ProcessResponse.setResponse(res, user, (a) => a);
     }
 
-    @Post('confirm-register/:token')
-    async ConfirmRegister(@Param('token') token: string, @Response() res) {
-        const user = await this.confirmRegister.execute({token: token});
+    @Post('confirm-register')
+    async ConfirmRegister(@Body() confirmRegisterDto: ConfirmRegisterDto, @Response() res) {
+        const user = await this.confirmRegister.execute(confirmRegisterDto);
         return ProcessResponse.setResponse(res, user, UserMapper.DomainToDto);
     }
 

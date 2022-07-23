@@ -1,3 +1,4 @@
 export class ConfirmRegisterDto {
-  token: string;
+    token: string;
+    userId: string;
 }
