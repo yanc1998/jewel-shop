@@ -2,6 +2,7 @@ import {DomainTimestamp} from '../../../shared/domain/domain.timestamp';
 import {DomainEntity} from '../../../shared/domain/entity.abstract';
 import {Result} from '../../../shared/core/Result';
 import {UniqueEntityID} from '../../../shared/domain/UniqueEntityID';
+import {hash, hashSync} from "bcrypt";
 
 type ValidationCodeProps = DomainTimestamp & {
     code: string;
@@ -42,7 +43,14 @@ export class ValidationCode extends DomainEntity<ValidationCodeProps> {
 
     public static Create(props: ValidationCodeProps, id: string = null): Result<ValidationCode> {
         // set guards here
+
         return Result.Ok(new ValidationCode(props, new UniqueEntityID(id)));
+    }
+
+    public setCodeHash(code: string) {
+        if (code) {
+            this.props.code = hashSync(code, 5);
+        }
     }
 
     public Update(props: any) {

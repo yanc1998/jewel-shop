@@ -8,8 +8,12 @@ import {UserStatus} from 'src/user/domain/enums/user.status';
 import {AppConfigService} from 'src/shared/modules/config/service/app-config-service';
 import {UpdateUserUseCase} from 'src/user/application/useCases/user.update.use-case';
 import {ConfirmRegisterDto} from '../dtos/confirm.register.dto';
-import {FindByUserIdValidationCodeUseCase} from "../../../validation_code/application/useCases";
-
+import {
+    FindByUserIdValidationCodeUseCase,
+    RemoveValidationCodeUseCase
+} from "../../../validation_code/application/useCases";
+import {compare, compareSync} from 'bcrypt';
+import {ValidationCode} from "../../../validation_code/domain/entities/validation_code.entity";
 
 export type ConfirmRegisterUseCaseResponse = Either<AppError.UnexpectedErrorResult<User>
     | AppError.ValidationErrorResult<User>,
@@ -17,14 +21,14 @@ export type ConfirmRegisterUseCaseResponse = Either<AppError.UnexpectedErrorResu
 
 export type ConfirmCodeUseCaseResponse = Either<AppError.UnexpectedErrorResult<any>
     | AppError.ValidationErrorResult<any>,
-    Result<any>>;
+    Result<ValidationCode>>;
 
 @Injectable()
 export class ConfirmRegisterUseCase implements IUseCase<ConfirmRegisterDto, Promise<ConfirmRegisterUseCaseResponse>> {
 
     private _logger: Logger;
 
-    constructor(private readonly findValidationCodeByUserId: FindByUserIdValidationCodeUseCase, private readonly confifService: AppConfigService, private readonly updateUserUseCase: UpdateUserUseCase) {
+    constructor(private readonly removeValidationCodeUseCase: RemoveValidationCodeUseCase, private readonly findValidationCodeByUserId: FindByUserIdValidationCodeUseCase, private readonly confifService: AppConfigService, private readonly updateUserUseCase: UpdateUserUseCase) {
         this._logger = new Logger('FindByIdUseCase');
     }
 
@@ -32,14 +36,21 @@ export class ConfirmRegisterUseCase implements IUseCase<ConfirmRegisterDto, Prom
         this._logger.log('Executing...');
 
         try {
-            const idOrError = await this.validateToken(request.token, request.userId)
-            if (idOrError.isLeft()) {
-                const error = idOrError.value.unwrapError()
+            const codeOrError = await this.validateToken(request.token, request.userId)
+            if (codeOrError.isLeft()) {
+                const error = codeOrError.value.unwrapError()
                 return left(Result.Fail(new AppError.ValidationError(error.message)));
             }
-            const id = idOrError.value.unwrap()
+
+            const code = codeOrError.value.unwrap()
+            const deleteCodeOrError = await this.removeValidationCodeUseCase.execute({id: code._id.toString()})
+            if (deleteCodeOrError.isLeft()) {
+                const error = deleteCodeOrError.value.unwrapError()
+                return left(Result.Fail(new AppError.UnexpectedError(error)))
+            }
+
             const userConfirmRegister = await this.updateUserUseCase.execute({
-                id: id,
+                id: request.userId,
                 data: {status: UserStatus.Register}
             })
 
@@ -62,9 +73,10 @@ export class ConfirmRegisterUseCase implements IUseCase<ConfirmRegisterDto, Prom
             return left(Result.Fail(new AppError.ValidationError(error.message)))
         }
         const validationCode = validationCodeOrError.value.unwrap()
-        if (validationCode.code != token) {
+
+        if (!compareSync(token, validationCode.code)) {
             return left(Result.Fail(new AppError.ValidationError('invalid code')))
         }
-        return right(Result.Ok())
+        return right(Result.Ok(validationCode))
     }
 }

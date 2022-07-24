@@ -11,6 +11,8 @@ import {EnumPermits, Roles} from 'src/shared/domain/enum.permits';
 import {UserStatus} from 'src/user/domain/enums/user.status';
 import {AppConfigService} from 'src/shared/modules/config/service/app-config-service';
 import {CreateValidationCodeUseCase} from "../../../validation_code/application/useCases";
+import stringRandom from "string-random";
+import {hash} from "bcrypt";
 
 
 export type RegisterUseCaseResponse = Either<AppError.UnexpectedErrorResult<User>
@@ -42,19 +44,19 @@ export class RegisterUseCase implements IUseCase<RegisterDto, Promise<RegisterUs
             }
 
             const user = userOrError.value.unwrap()
-
+            const code = await this.generateCode()
             const validationCodeOrError = await this.createValidationCodeUseCase.execute({
-                userId: user._id.toString()
+                userId: user._id.toString(),
+                code: code
             })
             if (validationCodeOrError.isLeft()) {
                 const error = validationCodeOrError.value.unwrapError()
                 return left(Result.Fail(new AppError.ValidationError(error.message)))
             }
-            const validationCode = validationCodeOrError.value.unwrap()
-            //por ahora asi, despues hasheo el id para que no haya problemas con seguridad
+            //ver si es mejor no esperar por la promesa
             const emailOrError = await this.sendEmailUseCase.execute({
                 to: user.email,
-                body: {data: "", message: `write this code for validate register ${validationCode.code}`}
+                body: {data: "", message: `write this code for validate register ${code}`}
             })
             if (emailOrError.isLeft()) {
                 const error = emailOrError.value.unwrapError()
@@ -65,5 +67,10 @@ export class RegisterUseCase implements IUseCase<RegisterDto, Promise<RegisterUs
         } catch (error) {
             return left(Result.Fail(new AppError.UnexpectedError(error)));
         }
+    }
+
+    private async generateCode(): Promise<string> {
+        const code = stringRandom(6)
+        return code
     }
 }

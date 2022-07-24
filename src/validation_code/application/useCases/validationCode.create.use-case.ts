@@ -6,7 +6,8 @@ import {IUseCase} from '../../../shared/core/interfaces/IUseCase';
 import {ValidationCodeCreateDto} from '../dtos/validationCode.create.dto';
 import {ValidationCode} from "../../domain/entities/validation_code.entity";
 import {ValidateCodeRepository} from "../../infra/repositories/validateCode.repository";
-
+import stringRandom from 'string-random'
+import {hash} from 'bcrypt';
 
 export type CreateValidationCodeUseCaseResponse = Either<AppError.UnexpectedErrorResult<ValidationCode>
     | AppError.ValidationErrorResult<ValidationCode>,
@@ -25,24 +26,20 @@ export class CreateValidationCodeUseCase implements IUseCase<ValidationCodeCreat
 
     async execute(request: ValidationCodeCreateDto): Promise<CreateValidationCodeUseCaseResponse> {
         this._logger.log('Executing...');
-        const code = await this.generateCode()
-        const fileOrError: Result<ValidationCode> = ValidationCode.New({...request, code: code});
+        const validationCodeOrError: Result<ValidationCode> = ValidationCode.New({...request});
 
-        if (fileOrError.isFailure)
-            return left(fileOrError);
+        if (validationCodeOrError.isFailure)
+            return left(validationCodeOrError);
 
-        const file: ValidationCode = fileOrError.unwrap();
-
+        const validationCode: ValidationCode = validationCodeOrError.unwrap();
+        validationCode.setCodeHash(validationCode.code)
         try {
-            await this.validateCodeRepository.save(file);
+            await this.validateCodeRepository.save(validationCode);
 
-            return right(Result.Ok(file));
+            return right(Result.Ok(validationCode));
         } catch (error) {
             return left(Result.Fail(new AppError.UnexpectedError(error)));
         }
     }
 
-    async generateCode(): Promise<string> {
-        return 'ABCDE'
-    }
 }
