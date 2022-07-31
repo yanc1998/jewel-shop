@@ -11,7 +11,7 @@ import {SubcategoryModule} from "../subcategory/subcategory.module";
     imports: [
         DataAccessModule,
         TypeOrmModule.forFeature([CategoryPersistence]),
-        SubcategoryModule
+        SubcategoryModule,
     ],
     providers: [...CategoryUseCases, CategoryRepository],
     exports: [],

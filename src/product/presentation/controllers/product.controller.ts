@@ -8,7 +8,7 @@ import {
     Post,
     Put,
     Response,
-    UploadedFile,
+    UploadedFile, UseGuards,
     UseInterceptors
 } from '@nestjs/common';
 import {
@@ -26,6 +26,10 @@ import {ProductUpdateDto} from '../../application/dtos/product.update.dto';
 import {ProductCreateDto} from '../../application/dtos/product.create.dto';
 import {ProductMappers} from '../../infra/mappers/product.mappers';
 import {FileInterceptor} from "@nestjs/platform-express";
+import {Roles} from "../../../auth/application/guards/role";
+import {Roles as Role} from "../../../shared/domain/enum.permits";
+import {RolesGuard} from "../../../auth/application/guards/roleGuard";
+import {JwtAuthGuard} from "../../../auth/application/guards/jwtAuthGuard";
 
 
 @Controller('product')
@@ -69,7 +73,9 @@ export class ProductController {
         return ProcessResponse.setResponse(res, pag, ProductMappers.PaginatedToDto);
     }
 
-    // @UseGuards(JwtAuthGuard)
+    @Roles(Role.Admin)
+    @UseGuards(RolesGuard)
+    @UseGuards(JwtAuthGuard)
     @Post('create')
     @UseInterceptors(FileInterceptor('file'))
     async create(@Body() body: ProductCreateDto, @UploadedFile() file: any, @Response() res) {
@@ -78,7 +84,9 @@ export class ProductController {
         return ProcessResponse.setResponse<Product>(res, teacher, ProductMappers.DomainToDto);
     }
 
-    // @UseGuards(JwtAuthGuard)
+    @Roles(Role.Admin)
+    @UseGuards(RolesGuard)
+    @UseGuards(JwtAuthGuard)
     @Put()
     async update(@Body() body: ProductUpdateDto, @Response() res) {
         this._logger.log('Update');
@@ -87,7 +95,9 @@ export class ProductController {
         return ProcessResponse.setResponse<Product>(res, teacher, ProductMappers.DomainToDto);
     }
 
-    // @UseGuards(JwtAuthGuard)
+    @Roles(Role.Admin)
+    @UseGuards(RolesGuard)
+    @UseGuards(JwtAuthGuard)
     @Delete()
     async delete(@Body() body: { id: string }, @Response() res) {
         this._logger.log('Delete');

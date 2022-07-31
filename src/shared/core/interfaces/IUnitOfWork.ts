@@ -1,4 +1,5 @@
 import { IRepository, IRepositoryFactory } from './IRepository';
+import {TypeResponse} from "../../modules/data-access/typeorm/unitwork.typeorm";
 
 export interface IUnitOfWork {
   /**
@@ -20,7 +21,7 @@ export interface IUnitOfWork {
    * @returns  {(Promise<T> | T)}
    * @memberof IUnitOfWork
    */
-  commit<T>(work: () => Promise<T> | T): Promise<T> | T;
+  commit(work: () => Promise<TypeResponse>): Promise<TypeResponse>;
 
   /**
    * Return a repository with the UnitOfWork transaction context.

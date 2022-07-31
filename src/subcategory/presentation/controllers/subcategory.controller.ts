@@ -1,4 +1,4 @@
-import {Body, Controller, Delete, Get, Logger, Param, Post, Put, Response} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Logger, Param, Post, Put, Response, UseGuards} from '@nestjs/common';
 import {
     CreateSubcategoryUseCase,
     FindByIdSubcategoryUseCase,
@@ -12,10 +12,13 @@ import {SubcategoryPaginatedDto} from '../../application/dtos/subcategory.pagina
 import {SubcategoryUpdateDto} from '../../application/dtos/subcategory.update.dto';
 import {SubcategoryCreateDto} from '../../application/dtos/subcategory.create.dto';
 import {SubcategoryMappers} from '../../infra/mappers/subcategoryMappers';
+import {Roles} from "../../../auth/application/guards/role";
+import {Roles as Role} from "../../../shared/domain/enum.permits";
+import {RolesGuard} from "../../../auth/application/guards/roleGuard";
+import {JwtAuthGuard} from "../../../auth/application/guards/jwtAuthGuard";
 
 @Controller('subcategory')
 export class SubcategoryController {
-    L
 
     private _logger: Logger;
 
@@ -46,7 +49,9 @@ export class SubcategoryController {
         return ProcessResponse.setResponse(res, pag, SubcategoryMappers.PaginatedToDto);
     }
 
-    // @UseGuards(JwtAuthGuard)
+    @Roles(Role.Admin)
+    @UseGuards(RolesGuard)
+    @UseGuards(JwtAuthGuard)
     @Post('create')
     async create(@Body() body: SubcategoryCreateDto, @Response() res) {
 
@@ -56,7 +61,9 @@ export class SubcategoryController {
         return ProcessResponse.setResponse<Subcategory>(res, teacher, SubcategoryMappers.DomainToDto);
     }
 
-    // @UseGuards(JwtAuthGuard)
+    @Roles(Role.Admin)
+    @UseGuards(RolesGuard)
+    @UseGuards(JwtAuthGuard)
     @Put()
     async update(@Body() body: SubcategoryUpdateDto, @Response() res) {
         this._logger.log('Update');
@@ -65,7 +72,9 @@ export class SubcategoryController {
         return ProcessResponse.setResponse<Subcategory>(res, teacher, SubcategoryMappers.DomainToDto);
     }
 
-    // @UseGuards(JwtAuthGuard)
+    @Roles(Role.Admin)
+    @UseGuards(RolesGuard)
+    @UseGuards(JwtAuthGuard)
     @Delete()
     async delete(@Body() body: { id: string }, @Response() res) {
         this._logger.log('Delete');

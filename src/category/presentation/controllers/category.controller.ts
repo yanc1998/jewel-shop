@@ -1,4 +1,4 @@
-import {Body, Controller, Delete, Get, Logger, Param, Post, Put, Response} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Logger, Param, Post, Put, Response, UseGuards} from '@nestjs/common';
 import {
     CreateCategoryUseCase,
     FindByIdCategoryUseCase,
@@ -12,6 +12,13 @@ import {CategoryPaginatedDto} from '../../application/dtos/category.paginated.dt
 import {CategoryUpdateDto} from '../../application/dtos/category.update.dto';
 import {CategoryCreateDto} from '../../application/dtos/category.create.dto';
 import {CategoryMappers} from '../../infra/mappers/category.mappers';
+import {JwtAuthGuard} from "../../../auth/application/guards/jwtAuthGuard";
+import {RolesGuard} from "../../../auth/application/guards/roleGuard";
+import {Roles as Role} from "../../../shared/domain/enum.permits";
+
+import {Roles} from "../../../auth/application/guards/role";
+import {TypeOrmUnitOfWork} from "../../../shared/modules/data-access/typeorm/unitwork.typeorm";
+
 
 @Controller('category')
 export class CategoryController {
@@ -19,6 +26,7 @@ export class CategoryController {
     private _logger: Logger;
 
     constructor(
+        private readonly typeOrmUnitOfWork: TypeOrmUnitOfWork,
         private readonly findOneUseCase: FindByIdCategoryUseCase,
         private readonly createTeacher: CreateCategoryUseCase,
         private readonly updateTeacher: UpdateTeacherUseCase,
@@ -31,7 +39,6 @@ export class CategoryController {
     @Get(':id')
     async findOne(@Param() params, @Response() res) {
         this._logger.log('Find One');
-
         const teacher = await this.findOneUseCase.execute({id: params.id});
         return ProcessResponse.setResponse<Category>(res, teacher, CategoryMappers.DomainToDto);
     }
@@ -45,7 +52,9 @@ export class CategoryController {
         return ProcessResponse.setResponse(res, pag, CategoryMappers.PaginatedToDto);
     }
 
-    // @UseGuards(JwtAuthGuard)
+    @Roles(Role.Admin)
+    @UseGuards(RolesGuard)
+    @UseGuards(JwtAuthGuard)
     @Post('create')
     async create(@Body() body: CategoryCreateDto, @Response() res) {
 
@@ -55,7 +64,9 @@ export class CategoryController {
         return ProcessResponse.setResponse<Category>(res, teacher, CategoryMappers.DomainToDto);
     }
 
-    // @UseGuards(JwtAuthGuard)
+    @Roles(Role.Admin)
+    @UseGuards(RolesGuard)
+    @UseGuards(JwtAuthGuard)
     @Put()
     async update(@Body() body: CategoryUpdateDto, @Response() res) {
         this._logger.log('Update');
@@ -64,7 +75,9 @@ export class CategoryController {
         return ProcessResponse.setResponse<Category>(res, teacher, CategoryMappers.DomainToDto);
     }
 
-    // @UseGuards(JwtAuthGuard)
+    @Roles(Role.Admin)
+    @UseGuards(RolesGuard)
+    @UseGuards(JwtAuthGuard)
     @Delete()
     async delete(@Body() body: { id: string }, @Response() res) {
         this._logger.log('Delete');

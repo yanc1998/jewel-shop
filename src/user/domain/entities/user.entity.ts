@@ -99,41 +99,11 @@ export class User extends DomainEntity<UserProps> {
     }
 
     public Update(props: updateUserProps) {
-        if (props.username) {
-            const shortNameOrError = Guard.againstAtLeast({
-                argumentPath: 'shortname',
-                numChars: 3,
-                argument: props.username,
-            });
-            if (!shortNameOrError.succeeded) {
-                return Result.Fail(new AppError.ValidationError(shortNameOrError.message));
-            }
-            this.props.username = props.username;
-        }
-
-        if (props.password) {
-            const passwordOrError = Guard.againstAtLeast({
-                argumentPath: 'password',
-                numChars: 5,
-                argument: props.password
-            });
-            if (!passwordOrError.succeeded) {
-                return Result.Fail(new AppError.ValidationError(passwordOrError.message));
-            }
-        }
-
-        if (props.roles) {
-            if (props.roles.length == 0)
-                return Result.Fail(new AppError.ValidationError('invalid roles'));
-            this.props.roles = props.roles;
-        }
-
-        if (props.status) {
-            this.props.status = props.status;
-        }
-
-        return Result.Ok(this);
-
+        this.props.username = props.username ?? this.props.username;
+        this.props.password = props.password ?? this.props.password;
+        this.props.status = props.status ?? this.props.status;
+        this.props.roles = props.roles ?? this.props.roles;
+        this.props.updatedAt = new Date();
         // this.props.name = props.name ?? this.props.name;
     }
 }

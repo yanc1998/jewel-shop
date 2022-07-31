@@ -3,6 +3,7 @@ import {PaginatedTeacherUseCase} from './subcategory.paginated.use-case';
 import {RemoveSubcategoryUseCase} from './subcategory.remove.use-case';
 import {UpdateTeacherUseCase} from './subcategory.update.use-case';
 import {FindByIdSubcategoryUseCase} from './subcategory.find-by-id.use-case';
+import {RemoveSubcategoryManyUseCase} from "./subcategory.remove-many.use-case";
 
 export * from './subcategory.create.use-case';
 export * from './subcategory.paginated.use-case';
@@ -12,6 +13,7 @@ export * from './subcategory.find-by-id.use-case';
 
 
 export const SubcategoryUseCases = [
+    RemoveSubcategoryManyUseCase,
     CreateSubcategoryUseCase,
     PaginatedTeacherUseCase,
     RemoveSubcategoryUseCase,

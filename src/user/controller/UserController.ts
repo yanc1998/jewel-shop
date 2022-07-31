@@ -8,6 +8,9 @@ import { UpdateUserUseCase } from '../application/useCases/user.update.use-case'
 import { UserMapper } from '../infra/mappers/user.mappers';
 import { PaginatedUserUseCase } from '../application/useCases/user.paginate.use-case';
 import { UserPaginatedDto } from '../application/dtos/user.paginated.dto';
+import {Roles} from "../../auth/application/guards/role";
+import {Roles as Role} from "../../shared/domain/enum.permits";
+import {RolesGuard} from "../../auth/application/guards/roleGuard";
 
 //@UseGuards(RolesGuard)
 @Controller('user')
@@ -15,6 +18,8 @@ export class UserController {
   constructor(private readonly createUser: CreateUserUseCase, private readonly updateUser: UpdateUserUseCase, private readonly paginateUser: PaginatedUserUseCase) {
   }
 
+  @Roles(Role.Admin)
+  @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
   @Post('create')
   async create(@Body() userCreateDto: UserCreateDto, @Response() res) {
@@ -23,6 +28,8 @@ export class UserController {
     return ProcessResponse.setResponse(res, user, UserMapper.DomainToDto);
   }
 
+  @Roles(Role.Admin)
+  @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
   @Post('update')
   async update(@Body() updateUserDto: UserUpdateDto, @Response() res) {

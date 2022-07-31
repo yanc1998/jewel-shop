@@ -14,7 +14,7 @@ import {ProductModule} from "../product/product.module";
         ProductModule
     ],
     providers: [...SubcategoryUseCases, SubcategoryRepository],
-    exports: [],
+    exports: [...SubcategoryUseCases],
     controllers: [SubcategoryController],
 })
 export class SubcategoryModule {
