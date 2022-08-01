@@ -20,6 +20,7 @@ export class ProcessResponse {
 
     const error = data.value.unwrapError();
 
+    console.log(error)
     if (error.name === AppError.UnexpectedError.name) {
       return res.status(400).json({
         code: 400,

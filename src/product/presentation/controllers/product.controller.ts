@@ -68,7 +68,7 @@ export class ProductController {
     @Post()
     async getAllPaginated(@Body() body: ProductPaginatedDto, @Response() res) {
         this._logger.log('Paginated');
-
+        console.log(body)
         const pag = await this.paginatedProductUseCase.execute(body);
         return ProcessResponse.setResponse(res, pag, ProductMappers.PaginatedToDto);
     }
