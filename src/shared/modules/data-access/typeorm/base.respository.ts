@@ -8,6 +8,7 @@ import {IEntity} from 'src/shared/core/interfaces/IEntity';
 import {PageParams} from '../../../core/PaginatorParams';
 import {getDefaultPaginatedFindResult, PaginatedFindResult} from '../../../core/PaginatedFindResult';
 import {FindAllResult} from '../../../core/FindAllResult';
+import {QueryDeepPartialEntity} from "typeorm/query-builder/QueryPartialEntity";
 
 export abstract class BaseRepository<E extends IEntity,
     P extends PersistentEntity> implements IRepository<E> {
@@ -41,7 +42,7 @@ export abstract class BaseRepository<E extends IEntity,
 
     async update(entity: E, id: string): Promise<void> {
         this._logger.debug(`Update entity with id: {${id}}`);
-        await this._entityRepository.update({id: id}, this._domainToPersistentFunc(entity) as DeepPartial<P>);
+        await this._entityRepository.update(id, this._domainToPersistentFunc(entity) as any);
     }
 
     async saveMany(entities: E[]): Promise<void> {
