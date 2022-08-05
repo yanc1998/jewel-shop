@@ -5,7 +5,7 @@ export const databaseConfig = registerAs('database', () => ({
   type: process.env.DATABASE_TYPE,
   username: process.env.DATABASE_USERNAME,
   password: process.env.DATABASE_PASSWORD,
-  connectString: process.env.DATABASE_CONNECT_STRING,
+  connectString: process.env.DATABASE_URL,
   host: process.env.DATABASE_HOST,
   database: process.env.DATABASE_NAME,
   synchronize: process.env.DATABASE_SYNC === 'true',
@@ -16,7 +16,7 @@ export const databaseSchema = {
   DATABASE_TYPE: Joi.string().required(),
   DATABASE_USERNAME: Joi.string().required(),
   DATABASE_PASSWORD: Joi.string().required(),
-  DATABASE_CONNECT_STRING: Joi.string(),
+  DATABASE_URL: Joi.string(),
   DATABASE_HOST: Joi.string(),
   DATABASE_NAME: Joi.string(),
   DATABASE_SYNC: Joi.string()
