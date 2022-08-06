@@ -1,10 +1,10 @@
 {
   "type": "postgres",
-  "host": "localhost",
+  "host": "ec2-54-85-56-210.compute-1.amazonaws.com",
   "port": 5432,
-  "username": "postgres",
-  "password": "pass2021",
-  "database": "horarios",
+  "username": "mvbgkglrdbrklt",
+  "password": "6c14e16587b171ea5a52b580204ad87d6e6058fbeb7424ae3a292570d55edd26",
+  "database": "ddnb5il1llj61h",
   "entities": [
     "dist/**/infra/entities/*.{persistence,infra}.js"
   ],

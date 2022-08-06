@@ -18,14 +18,14 @@ export interface IDataBaseConfig {
    * @type {string}
    * @memberof IDataBaseConfig
    */
-  //username: string;
+  username: string;
   /**
    * Database user password.
    *
    * @type {string}
    * @memberof IDataBaseConfig
    */
-  //password: string;
+  password: string;
   /**
    * Database connection string. Could be useful with oracleDb.
    *
@@ -40,7 +40,7 @@ export interface IDataBaseConfig {
    * @type {string}
    * @memberof IDataBaseConfig
    */
-  //host?: string;
+  host?: string;
 
   /**
    * Database name. Could be included in connection string.
@@ -48,7 +48,7 @@ export interface IDataBaseConfig {
    * @type {string}
    * @memberof IDataBaseConfig
    */
-  //database?: string;
+  database?: string;
 
   /**
    * Database synchronize.
