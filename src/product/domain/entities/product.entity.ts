@@ -3,15 +3,17 @@ import {DomainTimestamp} from '../../../shared/domain/domain.timestamp';
 import {DomainEntity} from '../../../shared/domain/entity.abstract';
 import {Result} from '../../../shared/core/Result';
 import {UniqueEntityID} from '../../../shared/domain/UniqueEntityID';
+import {File} from "../../../file/domain/entities/file.entity";
 
 type ProductProps = DomainBaseProps & DomainTimestamp & {
     price: number;
-    fileId: string;
+    file: File | null;
+
     count: number;
     subcategoryId: string;
 };
 
-type newProductProps = Omit<ProductProps, 'id' | 'createdAt' | 'updatedAt'>;
+type newProductProps = Omit<ProductProps, 'id' | 'createdAt' | 'updatedAt'> & {};
 
 export class Product extends DomainEntity<ProductProps> {
 
@@ -31,8 +33,8 @@ export class Product extends DomainEntity<ProductProps> {
         return this.props.subcategoryId;
     }
 
-    get fileId(): string {
-        return this.props.fileId;
+    get file(): File {
+        return this.props.file;
     }
 
     get price(): number {
@@ -70,7 +72,7 @@ export class Product extends DomainEntity<ProductProps> {
         this.props.name = props.fullName ?? this.props.name;
         this.props.count = props.count ?? this.props.count;
         this.props.price = props.price ?? this.props.price;
-        this.props.fileId = props.fileId ?? this.props.fileId;
+        this.props.file = props.file ?? this.props.file;
         this.props.subcategoryId = props.subcategoryId ?? this.props.subcategoryId;
         this.props.updatedAt = new Date();
     }

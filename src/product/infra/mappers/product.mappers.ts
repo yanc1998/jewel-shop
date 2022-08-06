@@ -3,9 +3,11 @@ import {Product} from '../../domain/entities/product.entity';
 import {PaginatedFindResult} from '../../../shared/core/PaginatedFindResult';
 import {ProductDto} from '../../application/dtos/product.dto';
 import {ProductDetailsDto} from '../../application/dtos/product.details.dto';
+import {FileMappers} from "../../../file/infra/mappers/file.mappers";
 
 export class ProductMappers {
     public static PersistToDomain(persist: ProductPersistence): Product {
+        persist.file = FileMappers.PersistToDomain(persist.file)
         const domain = Product.Create({
             ...persist
         }, persist.id);
@@ -25,7 +27,7 @@ export class ProductMappers {
             description: domain.description,
             price: domain.price,
             subcategoryId: domain.subcategoryId,
-            fileId: domain.fileId,
+            fileId: domain.file._id.toString(),
             createdAt: domain.createdAt,
             updatedAt: domain.updatedAt,
         };
@@ -39,7 +41,7 @@ export class ProductMappers {
             price: domain.price,
             count: domain.count,
             subcategoryId: domain.subcategoryId,
-            fileId: domain.fileId,
+            file: FileMappers.DomainToDto(domain.file),
             createdAt: domain.createdAt,
             updatedAt: domain.updatedAt,
         };

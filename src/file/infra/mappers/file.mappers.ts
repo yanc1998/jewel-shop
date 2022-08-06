@@ -29,13 +29,14 @@ export class FileMappers {
     public static DomainToDto(domain: File): FileDto {
         return {
             id: domain._id.toString(),
-            url: domain.url,
+            url: 'http://localhost:3001/public/images/' + domain.url, //poner esto dinamico
             createdAt: domain.createdAt,
             updatedAt: domain.updatedAt,
         };
     }
 
     public static PaginatedToDto(pag: PaginatedFindResult<File>): PaginatedFindResult<FileDto> {
+        console.log('aasas')
         return {
             items: pag.items.length > 0 ? pag.items.map(FileMappers.DomainToDto) : [],
             limit: pag.limit,

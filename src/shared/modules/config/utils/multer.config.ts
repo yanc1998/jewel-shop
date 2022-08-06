@@ -22,7 +22,8 @@ export function multerOptions(path) {
         storage: diskStorage({
             destination: path,
             filename: (req: any, file: any, cb: any) => {
-                const randomName: string = Date.now().toString() + file.originalname;
+                const splitName = file.originalname.split('.')
+                const randomName: string = new Date().toISOString() + '.' + splitName[splitName.length - 1];
                 cb(null, randomName)
             }
         })

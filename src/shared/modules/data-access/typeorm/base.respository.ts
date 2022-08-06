@@ -1,7 +1,7 @@
 import {IRepository} from 'src/shared/core/interfaces/IRepository';
 import {OrmName} from '../types/orm-name.enum';
 import {InjectRepository} from '@nestjs/typeorm';
-import {DeepPartial, Repository} from 'typeorm';
+import {DeepPartial, JoinOptions, Repository} from 'typeorm';
 import {Logger, Type} from '@nestjs/common';
 import {PersistentEntity} from './base.entity';
 import {IEntity} from 'src/shared/core/interfaces/IEntity';
@@ -41,7 +41,7 @@ export abstract class BaseRepository<E extends IEntity,
 
     async update(entity: E, id: string): Promise<void> {
         this._logger.debug(`Update entity with id: {${id}}`);
-        await this._entityRepository.update({id: id}, this._domainToPersistentFunc(entity) as DeepPartial<P>);
+        await this._entityRepository.update(id, this._domainToPersistentFunc(entity) as any);
     }
 
     async saveMany(entities: E[]): Promise<void> {
@@ -65,9 +65,11 @@ export abstract class BaseRepository<E extends IEntity,
             .remove();
     }
 
-    async findById(id: string): Promise<E> {
+    async findById(id: string, relations: string[] = []): Promise<E> {
         this._logger.log(`Find by id: ${id}`);
-        const ans: P = await this._entityRepository.findOne(id);
+        const ans: P = await this._entityRepository.findOne(id, {
+            relations: relations
+        });
         if (ans)
             return this._persistToDomainFunc(ans);
         return null
@@ -106,7 +108,7 @@ export abstract class BaseRepository<E extends IEntity,
         return await this._entityRepository.count(filter);
     }
 
-    async getPaginated(paginatorParams: PageParams, filter: {}): Promise<PaginatedFindResult<E>> {
+    async getPaginated(paginatorParams: PageParams, filter: {}, relations: string[] = []): Promise<PaginatedFindResult<E>> {
         this._logger.log('Paginated');
 
         const count = await this.count(filter);
@@ -134,10 +136,13 @@ export abstract class BaseRepository<E extends IEntity,
             where: filter,
             skip: findOffset,
             take: pageLimit,
+            relations: relations
         });
 
+        const items = entities.map(this._persistToDomainFunc)
+        console.log(items,'items')
         return {
-            items: entities.map(this._persistToDomainFunc),
+            items: items,
             limit: pageLimit,
             currentPage,
             totalPages,

@@ -6,6 +6,7 @@ import {Product} from '../../domain/entities/product.entity';
 import {ProductPersistence} from '../entities/product.persistence';
 import {ProductMappers} from '../mappers/product.mappers';
 import {IProductRepository} from '../../domain/interfaces/IProductRepository';
+import {PageParams} from "../../../shared/core/PaginatorParams";
 
 @Injectable()
 export class ProductRepository extends BaseRepository<Product, ProductPersistence> implements IProductRepository {
@@ -19,4 +20,14 @@ export class ProductRepository extends BaseRepository<Product, ProductPersistenc
             .findOne(id);
         return ProductMappers.PersistToDomain(product);
     }
+
+
+    override async findById(id: string): Promise<Product> {
+        return super.findById(id, ['file'])
+    }
+
+    override async getPaginated(paginatorParams: PageParams, filter: {}) {
+        return super.getPaginated(paginatorParams, filter, ['file'])
+    }
 }
+

@@ -40,7 +40,7 @@ export interface IRepository<T> {
      *
      * @param id
      */
-    findById(id: string): Promise<T> | void;
+    findById(id: string, relations: []): Promise<T> | void;
 
 
     /**
