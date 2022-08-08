@@ -30,9 +30,10 @@ export class FileMappers {
     }
 
     public static DomainToDto(domain: File): FileDto {
+        const api_url = 'https://immense-badlands-98923.herokuapp.com/'
         return {
             id: domain._id.toString(),
-            url: 'http://localhost:3001/public/images/' + domain.url, //poner esto dinamico
+            url: api_url + 'public/images/' + domain.url, //poner esto dinamico
             createdAt: domain.createdAt,
             updatedAt: domain.updatedAt,
         };
