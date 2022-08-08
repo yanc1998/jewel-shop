@@ -36,9 +36,10 @@ export class CreateProductUseCase implements IUseCase<ProductCreateDto, Promise<
         if (fileOrError.isLeft()) {
             return left(Result.Fail(new AppError.UnexpectedError(fileOrError.value.unwrapError())));
         }
-        const file: FileDto = FileMappers.DomainToDto(fileOrError.value.unwrap())
+
+        const file: File = fileOrError.value.unwrap()
         delete request.file
-        const productOrError: Result<Product> = Product.New({...request, fileId: file.id});
+        const productOrError: Result<Product> = Product.New({...request, file: file});
 
         if (productOrError.isFailure)
             return left(productOrError);

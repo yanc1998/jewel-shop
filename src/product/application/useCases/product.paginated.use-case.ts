@@ -19,7 +19,7 @@ export class PaginatedProductUseCase implements IUseCase<ProductPaginatedDto, Pr
     private _logger: Logger;
 
     constructor(private readonly productRepository: ProductRepository) {
-        this._logger = new Logger('PaginatedTeacherUseCase');
+        this._logger = new Logger('PaginatedProductUseCase');
     }
 
     async execute(request: ProductPaginatedDto): Promise<PaginatedProductUseCaseResponse> {

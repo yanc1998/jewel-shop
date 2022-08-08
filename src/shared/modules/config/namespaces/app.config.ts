@@ -9,7 +9,8 @@ export const appConfig = registerAs('app', () => ({
     jwtSecret: process.env.JWT_SECRET,
     jwtExpiration: process.env.JWT_EXPIRATION,
     hostFront: process.env.HOST_FRONT,
-    fileDir: process.env.FILE_DIR
+    fileDir: process.env.FILE_DIR,
+    hostBack: process.env.HOST_BACK
 }));
 
 export const appSchema = {
@@ -19,5 +20,6 @@ export const appSchema = {
         .valid('development', 'production', 'test', 'provision')
         .default('test'),
     LOG_LEVEL: Joi.string().valid('log', 'error', 'warn', 'debug', 'verbose'),
-    FILE_DIR: Joi.string().required()
+    FILE_DIR: Joi.string().required(),
+    HOST_BACK: Joi.string()
 };

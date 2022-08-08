@@ -1,4 +1,4 @@
-import {Column, Entity, Index, JoinColumn, JoinTable, ManyToMany, ManyToOne} from 'typeorm';
+import {Column, Entity, Index, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany} from 'typeorm';
 import {PersistentEntity} from '../../../shared/modules/data-access/typeorm/base.entity';
 import {SubcategoryPersistence} from "../../../subcategory/infra/entities/subcategory.persistence";
 
@@ -12,7 +12,7 @@ export class CategoryPersistence extends PersistentEntity {
     @Column({type: 'text'})
     description: string;
 
-    @ManyToMany(
+    @OneToMany(
         () => SubcategoryPersistence,
         f => f.category,
         {cascade: ['update']},
