@@ -69,4 +69,6 @@ export interface IAppConfig {
      * @memberof IAppConfig
      */
     fileDir: string
+
+    hostBack: string
 }

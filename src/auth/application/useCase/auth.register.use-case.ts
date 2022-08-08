@@ -7,12 +7,15 @@ import {User} from 'src/user/domain/entities/user.entity';
 import {RegisterDto} from '../dtos/register.dto';
 import {CreateUserUseCase} from 'src/user/application/useCases/user.create.use-case';
 import {SendEmailUseCase} from 'src/email/application/useCases/email.send.use-case';
-import {EnumPermits, Roles} from 'src/shared/domain/enum.permits';
+import {Roles} from 'src/shared/domain/enum.permits';
 import {UserStatus} from 'src/user/domain/enums/user.status';
 import {AppConfigService} from 'src/shared/modules/config/service/app-config-service';
-import {CreateValidationCodeUseCase} from "../../../validation_code/application/useCases";
+import {
+    CreateValidationCodeUseCase,
+    FindByUserIdValidationCodeUseCase
+} from "../../../validation_code/application/useCases";
 import stringRandom from "string-random";
-import {hash} from "bcrypt";
+import {FindByEmailUserUseCase} from "../../../user/application/useCases/user.findByEmail.use-case";
 
 
 export type RegisterUseCaseResponse = Either<AppError.UnexpectedErrorResult<User>
@@ -24,7 +27,12 @@ export class RegisterUseCase implements IUseCase<RegisterDto, Promise<RegisterUs
 
     private _logger: Logger;
 
-    constructor(private readonly createValidationCodeUseCase: CreateValidationCodeUseCase, private readonly confifService: AppConfigService, private readonly createUserUseCase: CreateUserUseCase, private readonly sendEmailUseCase: SendEmailUseCase) {
+    constructor(private readonly createValidationCodeUseCase: CreateValidationCodeUseCase,
+                private readonly confifService: AppConfigService,
+                private readonly createUserUseCase: CreateUserUseCase,
+                private readonly sendEmailUseCase: SendEmailUseCase,
+                private readonly findUser: FindByEmailUserUseCase,
+                private readonly findValidationCode: FindByUserIdValidationCodeUseCase) {
         this._logger = new Logger('RegisterUseCase');
     }
 
@@ -32,6 +40,33 @@ export class RegisterUseCase implements IUseCase<RegisterDto, Promise<RegisterUs
         this._logger.log('Executing...');
 
         try {
+            //si existe el usuario pero sin confirmar, retornar el codigo de conformacion
+            const exist = await this.findUser.execute({email: request.email})
+            if (exist.isRight() && exist.value.unwrap()) {
+                const user = exist.value.unwrap()
+                if (user.status == UserStatus.Pending) {
+                    const codeOrError = await this.findValidationCode.execute({id: user._id.toString()})
+                    if (codeOrError.isLeft()) {
+                        const error = codeOrError.value.unwrapError()
+                        return left(Result.Fail(new AppError.ValidationError(error.message)))
+                    }
+
+                    const code = codeOrError.value.unwrap()
+                    const emailOrError = await this.sendEmailUseCase.execute({
+                        to: user.email,
+                        body: {data: "", message: `write this code for validate register ${code}`}
+                    })
+                    if (emailOrError.isLeft()) {
+                        const error = emailOrError.value.unwrapError()
+                        console.log(error)
+                        return left(Result.Fail(new AppError.ValidationError(error.message)));
+                    }
+
+                }
+            }
+
+            //caso de registro normal
+
             const userOrError = await this.createUserUseCase.execute({
                 ...request,
                 roles: [Roles.Admin],

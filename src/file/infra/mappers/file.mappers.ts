@@ -3,8 +3,11 @@ import {File} from '../../domain/entities/file.entity';
 import {PaginatedFindResult} from '../../../shared/core/PaginatedFindResult';
 import {FileDto} from '../../application/dtos/file.dto';
 import {FileDetailsDto} from '../../application/dtos/file.details.dto';
+import {ConfigService} from "@nestjs/config";
 
 export class FileMappers {
+
+
     public static PersistToDomain(persist: FilePersistence): File {
         const domain = File.Create({
             ...persist
