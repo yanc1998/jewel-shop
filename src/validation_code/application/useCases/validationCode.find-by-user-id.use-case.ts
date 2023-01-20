@@ -26,7 +26,7 @@ export class FindByUserIdValidationCodeUseCase implements IUseCase<{ id: string 
         id: string
     }): Promise<FindByIdFileUseCaseResponse> {
         try {
-            return Optional(await this.validateCodeRepository.findOne({userId: request.id}))
+            return Optional(await this.validateCodeRepository.findOne({filter: {userId: request.id}}))
                 .okOr(new AppError.ObjectNotExist(`Validate with userId ${request.id} doesn't exist`))
                 .mapOrElse(
                     //if error

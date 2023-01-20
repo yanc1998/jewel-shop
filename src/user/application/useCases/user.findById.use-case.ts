@@ -4,7 +4,6 @@ import {Result} from '../../../shared/core/Result';
 import {IUseCase} from '../../../shared/core/interfaces/IUseCase';
 import {Injectable, Logger} from '@nestjs/common';
 import {User} from 'src/user/domain/entities/user.entity';
-import {UserCreateDto} from '../dtos/user.create.dto';
 import {UserRepository} from 'src/user/infra/repositories/user.repository';
 import {UserFindByIdDto} from '../dtos/user.findById.dto';
 

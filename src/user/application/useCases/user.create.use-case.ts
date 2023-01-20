@@ -55,7 +55,7 @@ export class CreateUserUseCase implements IUseCase<UserCreateDto, Promise<Create
         user.setPasswordHash(request.password)
 
 
-        const existUser = await this.userRepository.findOne({email: user.email})
+        const existUser = await this.userRepository.findOne({filter: {email: user.email}})
         if (existUser)
             return left(Result.Fail(new AppError.ValidationError('user exist')));
 

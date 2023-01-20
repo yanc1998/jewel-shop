@@ -16,7 +16,7 @@ export class SendEmailUseCase implements IUseCase<EmailSendDto, Promise<SendEMai
     private _logger: Logger;
 
     constructor(private readonly mailerService: MailerService) {
-        this._logger = new Logger('CreateUserUseCase');
+        this._logger = new Logger('SendEmailUseCase');
     }
 
     async execute(request: EmailSendDto): Promise<SendEMailUseCaseResponse> {

@@ -10,10 +10,11 @@ import {CreateFileUseCase} from "../../../file/application/useCases";
 import {File} from "../../../file/domain/entities/file.entity";
 import {FileMappers} from "../../../file/infra/mappers/file.mappers";
 import {FileDto} from "../../../file/application/dtos/file.dto";
+import {TypeOrmUnitOfWork} from "../../../shared/modules/data-access/typeorm/unitwork.typeorm";
 
 
 export type CreateProductUseCaseResponse = Either<AppError.UnexpectedErrorResult<Product>
-    | AppError.ValidationErrorResult<Product>,
+    | AppError.ValidationErrorResult<Product>, | AppError.ObjectNotExistResult<Product> |
     Result<Product>>;
 
 @Injectable()
@@ -22,6 +23,7 @@ export class CreateProductUseCase implements IUseCase<ProductCreateDto, Promise<
     private _logger: Logger;
 
     constructor(
+        private readonly typeOrmUnitOfWork: TypeOrmUnitOfWork,
         private readonly productRepository: ProductRepository,
         private readonly fileCreate: CreateFileUseCase
     ) {
@@ -29,6 +31,16 @@ export class CreateProductUseCase implements IUseCase<ProductCreateDto, Promise<
     }
 
     async execute(request: ProductCreateDto): Promise<CreateProductUseCaseResponse> {
+        await this.typeOrmUnitOfWork.start()
+
+        const user: CreateProductUseCaseResponse = await this.typeOrmUnitOfWork.commit(async () => {
+            return await this._execute(request);
+        })
+
+        return user
+    }
+
+    async _execute(request: ProductCreateDto): Promise<CreateProductUseCaseResponse> {
         this._logger.log('Executing...');
         console.log(request)
         const fileOrError = await this.fileCreate.execute({url: request.file.filename})

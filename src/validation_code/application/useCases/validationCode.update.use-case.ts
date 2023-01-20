@@ -26,7 +26,7 @@ export class UpdateValidationCodeUseCase implements IUseCase<ValidationCodeUpdat
     async execute(request: ValidationCodeUpdateDto): Promise<UpdateFileUseCaseResponse> {
         this._logger.log('Executing');
 
-        const toUpdate = Optional(await this.fileRepository.findOne({userId: request.userId}));
+        const toUpdate = Optional(await this.fileRepository.findOne({filter: {userId: request.userId}}));
         if (toUpdate.isNone())
             return left(Result.Fail(new AppError.ObjectNotExist(`ValidationCode with userId ${request.userId} doesn't exist`)));
 
