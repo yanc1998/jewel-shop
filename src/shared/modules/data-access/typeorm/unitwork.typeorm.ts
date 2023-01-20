@@ -54,9 +54,9 @@ export class TypeOrmUnitOfWork implements IUnitOfWork {
         this.dbContext = this.queryRunner.manager;
     }
 
-    async commit(work: () => Promise<TypeResponse>): Promise<TypeResponse> {
+    async commit(work: () => Promise<any>): Promise<any> {
         try {
-            const result = await work();
+            const result = await work() as any;
             if (result.isLeft()) {
                 const error = result.value.unwrapError()
                 await this.queryRunner.rollbackTransaction();

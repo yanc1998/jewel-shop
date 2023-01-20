@@ -16,18 +16,23 @@ import {
 } from "../../../validation_code/application/useCases";
 import stringRandom from "string-random";
 import {FindByEmailUserUseCase} from "../../../user/application/useCases/user.findByEmail.use-case";
+import {TypeOrmUnitOfWork} from "../../../shared/modules/data-access/typeorm/unitwork.typeorm";
+import {Category} from "../../../category/domain/entities/category.entity";
 
 
-export type RegisterUseCaseResponse = Either<AppError.UnexpectedErrorResult<User>
-    | AppError.ValidationErrorResult<User>,
-    Result<User>>;
+export type RegisterUseCaseResponse =
+    Either<AppError.UnexpectedErrorResult<User>
+        | AppError.ValidationErrorResult<User>
+        | AppError.ObjectNotExistResult<User>,
+        Result<User>>;
 
 @Injectable()
 export class RegisterUseCase implements IUseCase<RegisterDto, Promise<RegisterUseCaseResponse>> {
 
     private _logger: Logger;
 
-    constructor(private readonly createValidationCodeUseCase: CreateValidationCodeUseCase,
+    constructor(private readonly typeOrmUnitOfWork: TypeOrmUnitOfWork,
+                private readonly createValidationCodeUseCase: CreateValidationCodeUseCase,
                 private readonly confifService: AppConfigService,
                 private readonly createUserUseCase: CreateUserUseCase,
                 private readonly sendEmailUseCase: SendEmailUseCase,
@@ -36,7 +41,7 @@ export class RegisterUseCase implements IUseCase<RegisterDto, Promise<RegisterUs
         this._logger = new Logger('RegisterUseCase');
     }
 
-    async execute(request: RegisterDto): Promise<RegisterUseCaseResponse> {
+    async _execute(request: RegisterDto): Promise<RegisterUseCaseResponse> {
         this._logger.log('Executing...');
 
         try {
@@ -102,6 +107,15 @@ export class RegisterUseCase implements IUseCase<RegisterDto, Promise<RegisterUs
         } catch (error) {
             return left(Result.Fail(new AppError.UnexpectedError(error)));
         }
+    }
+
+    async execute(request: RegisterDto): Promise<RegisterUseCaseResponse> {
+        await this.typeOrmUnitOfWork.start()
+
+        const user: RegisterUseCaseResponse = await this.typeOrmUnitOfWork.commit(async () => {
+            return await this._execute(request);
+        })
+        return user
     }
 
     private async generateCode(): Promise<string> {

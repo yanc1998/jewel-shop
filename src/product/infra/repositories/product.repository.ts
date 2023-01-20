@@ -22,12 +22,5 @@ export class ProductRepository extends BaseRepository<Product, ProductPersistenc
     }
 
 
-    override async findById(id: string): Promise<Product> {
-        return super.findById(id, ['file'])
-    }
-
-    override async getPaginated(paginatorParams: PageParams, filter: {}) {
-        return super.getPaginated(paginatorParams, filter, ['file'])
-    }
 }
 

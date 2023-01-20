@@ -1,13 +1,16 @@
 import {IRepository} from 'src/shared/core/interfaces/IRepository';
 import {OrmName} from '../types/orm-name.enum';
 import {InjectRepository} from '@nestjs/typeorm';
-import {DeepPartial, JoinOptions, Repository} from 'typeorm';
+import {DeepPartial, FindManyOptions, JoinOptions, Repository} from 'typeorm';
 import {Logger, Type} from '@nestjs/common';
 import {PersistentEntity} from './base.entity';
 import {IEntity} from 'src/shared/core/interfaces/IEntity';
 import {PageParams} from '../../../core/PaginatorParams';
 import {getDefaultPaginatedFindResult, PaginatedFindResult} from '../../../core/PaginatedFindResult';
-import {FindAllResult} from '../../../core/FindAllResult';
+import {FindAllResult, getDefaultFindAll} from '../../../core/FindAllResult';
+import {QueryForm} from "./meta-mapper/query-form.type";
+import {MetaMapper} from "./meta-mapper/meta-mapper.abstract-class";
+import {v4 as uuidv4} from 'uuid'
 
 export abstract class BaseRepository<E extends IEntity,
     P extends PersistentEntity> implements IRepository<E> {
@@ -75,27 +78,29 @@ export abstract class BaseRepository<E extends IEntity,
         return null
     }
 
-    async findAll(filter: {}): Promise<FindAllResult<E>> {
+    async findAll(options: FindManyOptions<P>): Promise<FindAllResult<E>> {
         this._logger.log('Find All');
 
-        const count = await this.count(filter);
+        const count = await this.count({where: options.where});
 
-        if (count == 0) return getDefaultPaginatedFindResult();
+        if (count == 0) return getDefaultFindAll();
 
-        const ans = await this._entityRepository.find({
-            where: filter,
-        });
+        const ans = await this._entityRepository.find(options);
 
         return {
             items: ans.map(this._persistToDomainFunc),
         };
     }
 
-    async findOne(filter: {}): Promise<E> {
+    async findOne(form: QueryForm): Promise<E> {
         this._logger.log(`Find`);
-        const ans: P = await this._entityRepository.findOne(filter);
-        if (ans)
-            return this._persistToDomainFunc(ans);
+        const paginated = PageParams.create({pageNum: 0, pageLimit: 1}).getValue().unwrap()
+        const ans: PaginatedFindResult<E> = await this.getPaginated(paginated, form)
+
+        if (ans.items.length > 0) {
+            return ans.items[0]
+        }
+
         return null
     }
 
@@ -108,10 +113,18 @@ export abstract class BaseRepository<E extends IEntity,
         return await this._entityRepository.count(filter);
     }
 
-    async getPaginated(paginatorParams: PageParams, filter: {}, relations: string[] = []): Promise<PaginatedFindResult<E>> {
+    async getPaginated(paginatorParams: PageParams, form: QueryForm): Promise<PaginatedFindResult<E>> {
         this._logger.log('Paginated');
 
-        const count = await this.count(filter);
+        class MapperImplementation extends MetaMapper<P> {
+        }
+
+        const mapper = new MapperImplementation()
+
+        if (typeof form === 'string') form = JSON.parse(form as any) as QueryForm
+        let queryBuilder = mapper._createQuery(form, this._entityRepository)
+
+        const count = await queryBuilder.getCount()
 
         if (count == 0) return getDefaultPaginatedFindResult();
 
@@ -132,15 +145,22 @@ export abstract class BaseRepository<E extends IEntity,
 
         const findOffset = pageLimit * (pageNum - 1);
 
-        const entities = await this._entityRepository.find({
-            where: filter,
-            skip: findOffset,
-            take: pageLimit,
-            relations: relations
-        });
+        const subQuery = queryBuilder
+            .clone()
+            .select(`DISTINCT ${Object.keys(queryBuilder.expressionMap.orderBys).join(', ') || 'c.id'}`)
+            .limit(pageLimit)
+            .offset(findOffset)
+
+        queryBuilder.setParameters(subQuery.getParameters())
+        const selfJoinAlias = `selfJoin${uuidv4().split('-').join('')}`
+        queryBuilder = queryBuilder.innerJoin(
+            `(${subQuery.getQuery()})`,
+            selfJoinAlias,
+            `c.id = "${selfJoinAlias}".id`,
+        )
+        const [entities, _] = await queryBuilder.getManyAndCount()
 
         const items = entities.map(this._persistToDomainFunc)
-        console.log(items,'items')
         return {
             items: items,
             limit: pageLimit,

@@ -1,13 +1,13 @@
-import { Either, left, right } from 'src/shared/core/Either';
-import { AppError } from '../../../shared/core/errors/AppError';
-import { Result } from '../../../shared/core/Result';
-import { IUseCase } from '../../../shared/core/interfaces/IUseCase';
-import { Injectable, Logger } from '@nestjs/common';
-import { User } from 'src/user/domain/entities/user.entity';
-import { UserRepository } from 'src/user/infra/repositories/user.repository';
-import { ValidateDto } from '../dtos/validate.dto';
-import { compareSync } from 'bcrypt';
-import { UserStatus } from 'src/user/domain/enums/user.status';
+import {Either, left, right} from 'src/shared/core/Either';
+import {AppError} from '../../../shared/core/errors/AppError';
+import {Result} from '../../../shared/core/Result';
+import {IUseCase} from '../../../shared/core/interfaces/IUseCase';
+import {Injectable, Logger} from '@nestjs/common';
+import {User} from 'src/user/domain/entities/user.entity';
+import {UserRepository} from 'src/user/infra/repositories/user.repository';
+import {ValidateDto} from '../dtos/validate.dto';
+import {compareSync} from 'bcrypt';
+import {UserStatus} from 'src/user/domain/enums/user.status';
 
 export type ValidateUserUseCaseResponse = Either<AppError.UnexpectedErrorResult<User>
     | AppError.ValidationErrorResult<User>,
@@ -27,7 +27,9 @@ export class ValidateUserUseCase implements IUseCase<ValidateDto, Promise<Valida
 
         try {
             const userDomain = await this.userRepository.findOne({
-                email: request.email,
+                filter: {
+                    $and: {email: request.email}
+                }
             });
             if (!userDomain) {
                 return left(Result.Fail(new AppError.ValidationError('invalid email')));
