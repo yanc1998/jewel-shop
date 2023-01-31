@@ -67,8 +67,9 @@ export class TypeOrmUnitOfWork implements IUnitOfWork {
         } catch (error) {
             await this.queryRunner.rollbackTransaction();
             return left(Result.Fail(new AppError.UnexpectedError(error)))
-        } finally {
-            await this.queryRunner.release();
         }
+        // } finally {
+        //     await this.queryRunner.release();
+        // }
     }
 }

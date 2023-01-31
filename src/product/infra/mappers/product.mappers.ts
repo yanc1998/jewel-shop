@@ -7,7 +7,9 @@ import {FileMappers} from "../../../file/infra/mappers/file.mappers";
 
 export class ProductMappers {
     public static PersistToDomain(persist: ProductPersistence): Product {
-        persist.file = FileMappers.PersistToDomain(persist.file)
+        if (persist.file) {
+            persist.file = FileMappers.PersistToDomain(persist.file)
+        }
         const domain = Product.Create({
             ...persist
         }, persist.id);
@@ -27,24 +29,28 @@ export class ProductMappers {
             description: domain.description,
             price: domain.price,
             subcategoryId: domain.subcategoryId,
-            fileId: domain.file._id.toString(),
+            fileId: domain.fileId,
             createdAt: domain.createdAt,
             updatedAt: domain.updatedAt,
         };
     }
 
     public static DomainToDto(domain: Product): ProductDto {
-        return {
+        const dto = {
             id: domain._id.toString(),
             name: domain.name,
             description: domain.description,
             price: domain.price,
             count: domain.count,
             subcategoryId: domain.subcategoryId,
-            file: FileMappers.DomainToDto(domain.file),
+
             createdAt: domain.createdAt,
             updatedAt: domain.updatedAt,
-        };
+        }
+        if (domain.file) {
+            dto['file'] = FileMappers.DomainToDto(domain.file)
+        }
+        return dto
     }
 
     public static PaginatedToDto(pag: PaginatedFindResult<Product>): PaginatedFindResult<ProductDto> {

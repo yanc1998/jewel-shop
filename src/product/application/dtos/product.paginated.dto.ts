@@ -1,6 +1,6 @@
-import { PageParamsDto } from '../../../shared/core/PaginatorParams';
+import {PageParamsDto} from '../../../shared/core/PaginatorParams';
 
 export type ProductPaginatedDto = {
-  pageParams: PageParamsDto;
-  filter: {};
+    pageParams: PageParamsDto;
+    filter: Record<string, any>;
 };

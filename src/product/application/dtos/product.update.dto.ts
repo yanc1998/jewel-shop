@@ -1,5 +1,5 @@
-import {ProductDto} from './product.dto';
+import {ProductCreateDto} from "./product.create.dto";
 
-export type ProductUpdateDto = Omit<Partial<ProductDto>, 'id'> & {
+export type ProductUpdateDto = Partial<ProductCreateDto> & {
     productId: string
 };

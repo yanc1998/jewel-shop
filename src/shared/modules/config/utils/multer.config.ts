@@ -1,6 +1,7 @@
 import {MulterOptions} from "@nestjs/platform-express/multer/interfaces/multer-options.interface";
 import {HttpException} from "@nestjs/common";
-import {diskStorage} from 'multer'
+import {diskStorage, memoryStorage} from 'multer'
+import {v4} from 'uuid';
 
 export function multerOptions(path) {
     const options = {
@@ -19,16 +20,15 @@ export function multerOptions(path) {
 
             }
         },
-        storage: diskStorage({
-            destination: path,
+        storage: memoryStorage({
             filename: (req: any, file: any, cb: any) => {
                 const splitName = file.originalname.split('.')
-                const randomName: string = new Date().toISOString() + '.' + splitName[splitName.length - 1];
+                const randomName: string = v4() + '.' + splitName[splitName.length - 1];
                 cb(null, randomName)
             }
         })
 
-    }
+    } as MulterOptions
     return options
 
 }

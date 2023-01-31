@@ -26,7 +26,7 @@ export class FindByIdProductUseCase implements IUseCase<{ id: string }, Promise<
         id: string
     }): Promise<FindByIdProductUseCaseResponse> {
         try {
-            return Optional(await this.productRepository.findById(request.id))
+            return Optional(await this.productRepository.findById(request.id, ['file']))
                 .okOr(new AppError.ObjectNotExist(`Product with id ${request.id} doesn't exist`))
                 .mapOrElse(
                     //if error

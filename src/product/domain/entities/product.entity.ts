@@ -7,13 +7,18 @@ import {File} from "../../../file/domain/entities/file.entity";
 
 type ProductProps = DomainBaseProps & DomainTimestamp & {
     price: number;
-    file: File | null;
-
+    file?: File;
+    fileId: string;
     count: number;
     subcategoryId: string;
 };
 
-type newProductProps = Omit<ProductProps, 'id' | 'createdAt' | 'updatedAt'> & {};
+type newProductProps = Omit<ProductProps, 'id' | 'createdAt' | 'updatedAt' | 'file'>;
+
+type updateProductProps = Omit<newProductProps, | 'fileId' | 'subcategoryId'> & {
+    fileId?: string
+    subcategoryId?: string
+};
 
 export class Product extends DomainEntity<ProductProps> {
 
@@ -31,6 +36,10 @@ export class Product extends DomainEntity<ProductProps> {
 
     get subcategoryId(): string {
         return this.props.subcategoryId;
+    }
+
+    get fileId(): string {
+        return this.props.fileId;
     }
 
     get file(): File {
@@ -66,15 +75,16 @@ export class Product extends DomainEntity<ProductProps> {
         return Result.Ok(new Product(props, new UniqueEntityID(id)));
     }
 
-    public Update(props: any) {
-
+    public Update(props: updateProductProps) {
         this.props.description = props.description ?? this.props.description;
-        this.props.name = props.fullName ?? this.props.name;
+        this.props.name = props.name ?? this.props.name;
         this.props.count = props.count ?? this.props.count;
         this.props.price = props.price ?? this.props.price;
-        this.props.file = props.file ?? this.props.file;
+        this.props.fileId = props.fileId ?? this.props.fileId;
         this.props.subcategoryId = props.subcategoryId ?? this.props.subcategoryId;
         this.props.updatedAt = new Date();
+        return Product.Create(this.props, this._id.toString())
+        //Todo: change this
     }
 
 }

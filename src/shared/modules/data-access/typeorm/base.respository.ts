@@ -94,7 +94,7 @@ export abstract class BaseRepository<E extends IEntity,
 
     async findOne(form: QueryForm): Promise<E> {
         this._logger.log(`Find`);
-        const paginated = PageParams.create({pageNum: 0, pageLimit: 1}).getValue().unwrap()
+        const paginated = PageParams.create({pageNum: 1, pageLimit: 1}).getValue().unwrap()
         const ans: PaginatedFindResult<E> = await this.getPaginated(paginated, form)
 
         if (ans.items.length > 0) {
@@ -160,6 +160,7 @@ export abstract class BaseRepository<E extends IEntity,
         )
         const [entities, _] = await queryBuilder.getManyAndCount()
 
+        console.log(entities)
         const items = entities.map(this._persistToDomainFunc)
         return {
             items: items,

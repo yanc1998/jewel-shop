@@ -70,29 +70,31 @@ export class ProductController {
         this._logger.log('Paginated');
         console.log(body)
         const pag = await this.paginatedProductUseCase.execute(body);
+        console.log(pag)
         return ProcessResponse.setResponse(res, pag, ProductMappers.PaginatedToDto);
     }
 
-    @Roles(Role.Admin)
-    @UseGuards(RolesGuard)
-    @UseGuards(JwtAuthGuard)
+    // @Roles(Role.Admin)
+    // @UseGuards(RolesGuard)
+    // @UseGuards(JwtAuthGuard)
     @Post('create')
     @UseInterceptors(FileInterceptor('file'))
     async create(@Body() body: ProductCreateDto, @UploadedFile() file: any, @Response() res) {
         this._logger.log('Create');
-        const teacher = await this.createProductUseCase.execute({...body, file: file});
-        return ProcessResponse.setResponse<Product>(res, teacher, ProductMappers.DomainToDto);
+        const product = await this.createProductUseCase.execute({...body, file: file});
+        return ProcessResponse.setResponse<Product>(res, product, ProductMappers.DomainToDto);
     }
 
     @Roles(Role.Admin)
     @UseGuards(RolesGuard)
     @UseGuards(JwtAuthGuard)
     @Put()
-    async update(@Body() body: ProductUpdateDto, @Response() res) {
+    @UseInterceptors(FileInterceptor('file'))
+    async update(@Body() body: ProductUpdateDto, @UploadedFile() file: any, @Response() res) {
         this._logger.log('Update');
 
-        const teacher = await this.updateProductUseCase.execute(body);
-        return ProcessResponse.setResponse<Product>(res, teacher, ProductMappers.DomainToDto);
+        const product = await this.updateProductUseCase.execute({...body, file});
+        return ProcessResponse.setResponse<Product>(res, product, ProductMappers.DomainToDto);
     }
 
     @Roles(Role.Admin)
@@ -102,7 +104,7 @@ export class ProductController {
     async delete(@Body() body: { id: string }, @Response() res) {
         this._logger.log('Delete');
 
-        const teacher = await this.removeProductUseCase.execute(body);
-        return ProcessResponse.setResponse<Product>(res, teacher, ProductMappers.DomainToDto);
+        const product = await this.removeProductUseCase.execute(body);
+        return ProcessResponse.setResponse<Product>(res, product, ProductMappers.DomainToDto);
     }
 }

@@ -25,7 +25,7 @@ export class FindByEmailUserUseCase implements IUseCase<UserFindEmailIdDto, Prom
     async execute(request: UserFindEmailIdDto): Promise<FindByEmailUserUseCaseResponse> {
         this._logger.log('Executing...');
         try {
-            const userDomain = await this.userRepository.findOne({filter: {email: request.email}});
+            const userDomain = await this.userRepository.findOne({filter: {$and: {email: request.email}}});
             if (!userDomain)
                 return left(Result.Fail(new AppError.ValidationError('user not found')))
             return right(Result.Ok(userDomain));

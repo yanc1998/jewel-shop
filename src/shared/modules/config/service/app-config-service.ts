@@ -46,9 +46,9 @@ export class AppConfigService {
             'database.synchronize',
             false,
         ),
-        ssl:  {
-            rejectUnauthorized: false
-        }
+        // ssl:  {
+        //     rejectUnauthorized: false
+        // }
     };
 
     smtp: ISMTPConfig = {

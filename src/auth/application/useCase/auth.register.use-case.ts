@@ -17,7 +17,6 @@ import {
 import stringRandom from "string-random";
 import {FindByEmailUserUseCase} from "../../../user/application/useCases/user.findByEmail.use-case";
 import {TypeOrmUnitOfWork} from "../../../shared/modules/data-access/typeorm/unitwork.typeorm";
-import {Category} from "../../../category/domain/entities/category.entity";
 
 
 export type RegisterUseCaseResponse =
@@ -33,7 +32,7 @@ export class RegisterUseCase implements IUseCase<RegisterDto, Promise<RegisterUs
 
     constructor(private readonly typeOrmUnitOfWork: TypeOrmUnitOfWork,
                 private readonly createValidationCodeUseCase: CreateValidationCodeUseCase,
-                private readonly confifService: AppConfigService,
+                private readonly configService: AppConfigService,
                 private readonly createUserUseCase: CreateUserUseCase,
                 private readonly sendEmailUseCase: SendEmailUseCase,
                 private readonly findUser: FindByEmailUserUseCase,
@@ -74,7 +73,7 @@ export class RegisterUseCase implements IUseCase<RegisterDto, Promise<RegisterUs
 
             const userOrError = await this.createUserUseCase.execute({
                 ...request,
-                roles: [Roles.Admin],
+                roles: [Roles.Client],
                 status: UserStatus.Pending
             })
 

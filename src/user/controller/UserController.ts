@@ -29,9 +29,9 @@ export class UserController {
     }
 
 
-    @Roles(Role.Admin)
-    @UseGuards(RolesGuard)
-    @UseGuards(JwtAuthGuard)
+    // @Roles(Role.Admin)
+    // @UseGuards(RolesGuard)
+    // @UseGuards(JwtAuthGuard)
     @Post('create')
     async create(@Body() userCreateDto: UserCreateDto, @Response() res) {
         console.log(userCreateDto);
