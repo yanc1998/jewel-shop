@@ -6,6 +6,8 @@ import {Injectable, Logger} from '@nestjs/common';
 import {User} from 'src/user/domain/entities/user.entity';
 import {UserCreateDto} from '../dtos/user.create.dto';
 import {UserRepository} from 'src/user/infra/repositories/user.repository';
+import {UserStatus} from "../../domain/enums/user.status";
+import {Roles} from "../../../shared/domain/enum.permits";
 
 export type CreateUserUseCaseResponse = Either<AppError.UnexpectedErrorResult<User>
     | AppError.ValidationErrorResult<User>,
@@ -20,20 +22,20 @@ export class CreateUserUseCase implements IUseCase<UserCreateDto, Promise<Create
         this._logger = new Logger('CreateUserUseCase');
     }
 
-    //async onModuleInit() {
-    //    const exist = await this.userRepository.findOne({ email: 'yancarloglez98@gamil.com' })
-    //    if (!exist) {
-    //        const userAdmin: UserCreateDto = {
-    //            username: "YanCarlos",
-    //            password: "12345678ABC",
-    //           email: "yancarloglez98@gamil.com",
-    //            status: EnumStatus.Register,
-    //            roles: [EnumPermits.AdminAction]
-    //        }
-    //        console.log(userAdmin)
-    //        await this.execute(userAdmin)
-    //    }
-    //}
+    async onModuleInit() {
+        const exist = await this.userRepository.findOne({filter: {$and: {email: 'yancarloglez98@gamil.com'}}})
+        if (!exist) {
+            const userAdmin: UserCreateDto = {
+                username: "YanCarlos",
+                password: "12345678ABC",
+                email: "yancarloglez98@gamil.com",
+                status: UserStatus.Register,
+                roles: [Roles.Admin]
+            }
+            console.log(userAdmin)
+            await this.execute(userAdmin)
+        }
+    }
 
     async execute(request: UserCreateDto): Promise<CreateUserUseCaseResponse> {
         this._logger.log('Executing...');

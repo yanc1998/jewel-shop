@@ -43,7 +43,6 @@ export class CreateProductUseCase implements IUseCase<ProductCreateDto, Promise<
 
     async _execute(request: ProductCreateDto): Promise<CreateProductUseCaseResponse> {
         this._logger.log('Executing...');
-        console.log(request)
 
         const fileOrError = await this.fileCreate.execute({file: request.file})
 

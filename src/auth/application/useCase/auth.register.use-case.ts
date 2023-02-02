@@ -62,7 +62,6 @@ export class RegisterUseCase implements IUseCase<RegisterDto, Promise<RegisterUs
                     })
                     if (emailOrError.isLeft()) {
                         const error = emailOrError.value.unwrapError()
-                        console.log(error)
                         return left(Result.Fail(new AppError.ValidationError(error.message)));
                     }
 
@@ -99,7 +98,6 @@ export class RegisterUseCase implements IUseCase<RegisterDto, Promise<RegisterUs
             })
             if (emailOrError.isLeft()) {
                 const error = emailOrError.value.unwrapError()
-                console.log(error)
                 return left(Result.Fail(new AppError.ValidationError(error.message)));
             }
             return right(Result.Ok(user));

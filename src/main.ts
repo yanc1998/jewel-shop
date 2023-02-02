@@ -14,7 +14,6 @@ async function bootstrap() {
     });
 
     const publicPath = join(process.cwd(), 'public')
-    console.log(publicPath)
 
     app.use('/public', express.static(publicPath))
     const configService = app.get(AppConfigService);

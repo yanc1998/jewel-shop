@@ -34,7 +34,6 @@ export class UserController {
     // @UseGuards(JwtAuthGuard)
     @Post('create')
     async create(@Body() userCreateDto: UserCreateDto, @Response() res) {
-        console.log(userCreateDto);
         const user = await this.createUser.execute(userCreateDto);
         return ProcessResponse.setResponse(res, user, UserMapper.DomainToDto);
     }
@@ -44,7 +43,6 @@ export class UserController {
     @UseGuards(JwtAuthGuard)
     @Post('update')
     async update(@Body() updateUserDto: UserUpdateDto, @Response() res) {
-        console.log(updateUserDto);
         const user = await this.updateUser.execute(updateUserDto);
         return ProcessResponse.setResponse(res, user, UserMapper.DomainToDto);
     }
@@ -54,7 +52,7 @@ export class UserController {
     @UseGuards(JwtAuthGuard)
     @Post()
     async getAllPaginated(@Body() body: UserPaginatedDto, @Response() res) {
-        //this._logger.log('Paginated');
+        this._logger.log('Paginated');
         const pag = await this.paginateUser.execute(body);
         return ProcessResponse.setResponse(res, pag, UserMapper.PaginatedToDto);
     }

@@ -39,7 +39,6 @@ export class FileMappers {
     }
 
     public static PaginatedToDto(pag: PaginatedFindResult<File>): PaginatedFindResult<FileDto> {
-        console.log('aasas')
         return {
             items: pag.items.length > 0 ? pag.items.map(FileMappers.DomainToDto) : [],
             limit: pag.limit,

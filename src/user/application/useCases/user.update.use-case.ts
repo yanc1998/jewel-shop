@@ -28,7 +28,6 @@ export class UpdateUserUseCase implements IUseCase<UserUpdateDto, Promise<Update
             const user = await this.userRepository.findById(request.id)
             if (!user)
                 return left(Result.Fail(new AppError.ValidationError('user not found')))
-            console.log(request)
             user.Update(request.data)
             const newUserOrError = User.Create(user, user._id.toString())
             if (newUserOrError.isFailure) {

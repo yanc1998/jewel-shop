@@ -9,8 +9,8 @@ export abstract class MetaMapper<T> {
     _createQuery(form: QueryForm | string, repo: Repository<T>): SelectQueryBuilder<T> {
         let queryBuilder = repo.createQueryBuilder('c')
         if (!form) {
-            console.log(queryBuilder.getParameters())
-            console.log(queryBuilder.getQuery())
+            // console.log(queryBuilder.getParameters())
+            // console.log(queryBuilder.getQuery())
 
             return queryBuilder
         }

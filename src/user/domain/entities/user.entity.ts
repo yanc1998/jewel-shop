@@ -73,7 +73,6 @@ export class User extends DomainEntity<UserProps> {
 
     public static Create(props: UserProps, id: string = null): Result<User> {
         // set guards here
-        console.log(props)
         const shortNameOrError = Guard.againstAtLeast({
             argumentPath: 'shortname',
             numChars: 3,
@@ -99,13 +98,11 @@ export class User extends DomainEntity<UserProps> {
     }
 
     public Update(props: updateUserProps) {
-        console.log(props,'props')
         this.props.username = props.username ?? this.props.username;
         this.props.password = props.password ?? this.props.password;
         this.props.status = props.status ?? this.props.status;
         this.props.roles = props.roles ?? this.props.roles;
         this.props.updatedAt = new Date();
-        console.log('pass')
         // this.props.name = props.name ?? this.props.name;
     }
 }

@@ -160,7 +160,6 @@ export abstract class BaseRepository<E extends IEntity,
         )
         const [entities, _] = await queryBuilder.getManyAndCount()
 
-        console.log(entities)
         const items = entities.map(this._persistToDomainFunc)
         return {
             items: items,

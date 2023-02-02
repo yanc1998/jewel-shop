@@ -14,8 +14,8 @@ type PageParamsProps = {
 };
 
 export class PageParams extends ValueObject<PageParamsProps> {
-  static pageMinValue = 1;
-  static pageLimitMinValue = 1;
+  static pageMinValue = 0;
+  static pageLimitMinValue = 0;
 
   get pageLimit(): number {
     return this.props.pageLimit;

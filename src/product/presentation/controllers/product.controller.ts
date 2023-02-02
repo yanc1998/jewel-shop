@@ -68,15 +68,13 @@ export class ProductController {
     @Post()
     async getAllPaginated(@Body() body: ProductPaginatedDto, @Response() res) {
         this._logger.log('Paginated');
-        console.log(body)
         const pag = await this.paginatedProductUseCase.execute(body);
-        console.log(pag)
         return ProcessResponse.setResponse(res, pag, ProductMappers.PaginatedToDto);
     }
 
-    // @Roles(Role.Admin)
-    // @UseGuards(RolesGuard)
-    // @UseGuards(JwtAuthGuard)
+    @Roles(Role.Admin)
+    @UseGuards(RolesGuard)
+    @UseGuards(JwtAuthGuard)
     @Post('create')
     @UseInterceptors(FileInterceptor('file'))
     async create(@Body() body: ProductCreateDto, @UploadedFile() file: any, @Response() res) {
