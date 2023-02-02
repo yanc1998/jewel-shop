@@ -10,11 +10,13 @@ import {MulterModule} from "@nestjs/platform-express";
 import {AppConfigModule} from "../shared/modules/config/app-config.module";
 import {AppConfigService} from "../shared/modules/config/service/app-config-service";
 import {multerOptions} from "../shared/modules/config/utils/multer.config";
+import {EmailModule} from "../email/email.module";
 
 @Module({
     imports: [
         DataAccessModule,
         FileModule,
+        EmailModule,
         TypeOrmModule.forFeature([ProductPersistence]),
         MulterModule.registerAsync({
             imports: [AppConfigModule],

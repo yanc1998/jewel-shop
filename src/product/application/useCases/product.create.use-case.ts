@@ -9,9 +9,6 @@ import {ProductRepository} from "../../infra/repositories/product.repository";
 import {CreateFileUseCase} from "../../../file/application/useCases";
 import {File} from "../../../file/domain/entities/file.entity";
 import {TypeOrmUnitOfWork} from "../../../shared/modules/data-access/typeorm/unitwork.typeorm";
-import Jimp from 'jimp/es';
-import {AppConfigService} from "../../../shared/modules/config/service/app-config-service";
-import {v4} from 'uuid'
 
 export type CreateProductUseCaseResponse = Either<AppError.UnexpectedErrorResult<Product>
     | AppError.ValidationErrorResult<Product>, | AppError.ObjectNotExistResult<Product> |
@@ -23,7 +20,6 @@ export class CreateProductUseCase implements IUseCase<ProductCreateDto, Promise<
     private _logger: Logger;
 
     constructor(
-        private readonly configService: AppConfigService,
         private readonly typeOrmUnitOfWork: TypeOrmUnitOfWork,
         private readonly productRepository: ProductRepository,
         private readonly fileCreate: CreateFileUseCase

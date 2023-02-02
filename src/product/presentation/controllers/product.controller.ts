@@ -6,7 +6,7 @@ import {
     Logger,
     Param,
     Post,
-    Put,
+    Put, Request,
     Response,
     UploadedFile, UseGuards,
     UseInterceptors
@@ -30,6 +30,7 @@ import {Roles} from "../../../auth/application/guards/role";
 import {Roles as Role} from "../../../shared/domain/enum.permits";
 import {RolesGuard} from "../../../auth/application/guards/roleGuard";
 import {JwtAuthGuard} from "../../../auth/application/guards/jwtAuthGuard";
+import {ReserveProductUseCase} from "../../application/useCases/reserve.use-case";
 
 
 @Controller('product')
@@ -43,7 +44,8 @@ export class ProductController {
         private readonly updateProductUseCase: UpdateProductUseCase,
         private readonly removeProductUseCase: RemoveProductUseCase,
         private readonly paginatedProductUseCase: PaginatedProductUseCase,
-        private readonly findDetailsProductUseCase: FindDetailsProductUseCase) {
+        private readonly findDetailsProductUseCase: FindDetailsProductUseCase,
+        private readonly reserveUseCase: ReserveProductUseCase) {
 
         this._logger = new Logger('ProductController');
     }
@@ -105,4 +107,17 @@ export class ProductController {
         const product = await this.removeProductUseCase.execute(body);
         return ProcessResponse.setResponse<Product>(res, product, ProductMappers.DomainToDto);
     }
+
+    @Roles(Role.Client, Role.Admin)
+    @UseGuards(RolesGuard)
+    @UseGuards(JwtAuthGuard)
+    @Post('reserve')
+    async reserve(@Body() body: { id: string }, @Request() req, @Response() res) {
+        this._logger.log('Reserve');
+
+        const product = await this.reserveUseCase.execute({...body, user: req.user});
+        return ProcessResponse.setResponse<Product>(res, product, ProductMappers.DomainToDto);
+    }
+
+
 }

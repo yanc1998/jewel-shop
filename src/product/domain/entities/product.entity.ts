@@ -15,10 +15,19 @@ type ProductProps = DomainBaseProps & DomainTimestamp & {
 
 type newProductProps = Omit<ProductProps, 'id' | 'createdAt' | 'updatedAt' | 'file'>;
 
-type updateProductProps = Omit<newProductProps, | 'fileId' | 'subcategoryId'> & {
+type updateProductProps = {
     fileId?: string
     subcategoryId?: string
-};
+    count?: number;
+    price?: number;
+    name?: string;
+    description?: string;
+}
+
+// type updateProductProps = Omit<newProductProps, | 'fileId' | 'subcategoryId'> & {
+//     fileId?: string
+//     subcategoryId?: string
+// };
 
 export class Product extends DomainEntity<ProductProps> {
 
