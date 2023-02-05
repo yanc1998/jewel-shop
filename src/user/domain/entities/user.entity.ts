@@ -1,11 +1,11 @@
 import {DomainEntity} from '../../../shared/domain/entity.abstract';
 import {Result} from '../../../shared/core/Result';
-import {EnumPermits, Roles} from 'src/shared/domain/enum.permits';
-import {Guard} from 'src/shared/core/Guard';
-import {AppError} from 'src/shared/core/errors/AppError';
+import {Roles} from 'src/shared/domain/enum.permits';
 import {UserStatus} from '../enums/user.status';
 import {hashSync} from 'bcrypt';
 import {UniqueEntityID} from '../../../shared/domain/UniqueEntityID';
+import {Guard} from "../../../shared/core/Guard";
+import {AppError} from "../../../shared/core/errors/AppError";
 
 type UserProps = {
     username: string;
@@ -26,6 +26,7 @@ type updateUserProps = {
     password?: string;
     status?: UserStatus;
     roles?: Roles[];
+    email?: string
 };
 
 
@@ -74,7 +75,7 @@ export class User extends DomainEntity<UserProps> {
     public static Create(props: UserProps, id: string = null): Result<User> {
         // set guards here
         const shortNameOrError = Guard.againstAtLeast({
-            argumentPath: 'shortname',
+            argumentPath: 'username',
             numChars: 3,
             argument: props.username
         });
@@ -83,9 +84,20 @@ export class User extends DomainEntity<UserProps> {
         }
 
 
-        const passwordOrError = Guard.againstAtLeast({argumentPath: 'password', numChars: 5, argument: props.password});
+        const passwordOrError = Guard.againstAtLeast({
+            argumentPath: 'password',
+            numChars: 5,
+            argument: props.password
+        });
+
         if (!passwordOrError.succeeded) {
             return Result.Fail(new AppError.ValidationError(passwordOrError.message));
+        }
+
+        const emailOrError = Guard.IsEmail({argument: props.email, argumentPath: 'email'})
+
+        if (!emailOrError.succeeded) {
+            return Result.Fail(new AppError.ValidationError(emailOrError.message))
         }
 
         return Result.Ok(new User(props, new UniqueEntityID(id)));
@@ -102,7 +114,9 @@ export class User extends DomainEntity<UserProps> {
         this.props.password = props.password ?? this.props.password;
         this.props.status = props.status ?? this.props.status;
         this.props.roles = props.roles ?? this.props.roles;
+        this.props.email = props.email ?? this.props.email;
         this.props.updatedAt = new Date();
+        return User.Create(this.props, this._id.toString())
         // this.props.name = props.name ?? this.props.name;
     }
 }

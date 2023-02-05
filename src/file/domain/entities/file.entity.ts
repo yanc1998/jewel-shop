@@ -35,9 +35,7 @@ export class File extends DomainEntity<FileProps> {
     public static async New(props: newFileProps): Promise<Result<File>> {
 
         //save and resize file
-
-        const file_nameOrError = await resizeFile(props.file, props.fileDir)
-
+        const file_nameOrError: Result<string> = await resizeFile(props.file, props.fileDir)
         if (file_nameOrError.isFailure) {
             return Result.Fail(file_nameOrError.unwrapError())
         }
