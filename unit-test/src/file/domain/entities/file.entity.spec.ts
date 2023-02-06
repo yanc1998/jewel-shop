@@ -40,7 +40,8 @@ describe('file domain test', () => {
             expect(fileNewOrError.isSuccess).toBeTruthy()
             const fileNew = fileNewOrError.unwrap()
             expect(fileNew.createdAt).not.toBeNull()
-            //TODO: see how can i do check if file was created
+            const createdFile = fs.existsSync(pathFile + fileNew.url)
+            expect(createdFile).toBeTruthy()
         })
 
         it('new error', async () => {

@@ -12,7 +12,7 @@ export async function resizeFile(file, dir) {
             return Result.Fail<string>(new AppError.ValidationError('invalid file extension'))
         }
         const file_name = `${v4()}.${extension}`
-        file_memory.resize(600, 800).write(`${dir}${file_name}`)
+        await file_memory.resize(600, 800).writeAsync(`${dir}${file_name}`)
         return Result.Ok(file_name)
     } catch (e) {
         return Result.Fail<string>(new AppError.UnexpectedError(e))
